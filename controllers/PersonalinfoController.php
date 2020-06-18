@@ -19,6 +19,7 @@ use app\models\Jobtitle;
 use app\models\Joblevel;
 use app\models\Squad;
 use app\models\Employment;
+use app\models\User;
 use yii\helpers\Url;
 /**
  * PersonalinfoController implements the CRUD actions for Personalinfo model.
@@ -191,12 +192,27 @@ class PersonalinfoController extends Controller
     public function actionSave(){
         $_post = Yii::$app->request->post();
         $model = new Personalinfo();
+        $modelUser = new User();
         if($_post['mode']==1){
             $model = $this->findModel($_GET['id']);
+            if($model->UserID!=null){
+                $modelUser = User::find()
+                ->where(['UserID'=>$model->UserID])
+                ->one();
+            }
         }
         if (Yii::$app->request->isAjax) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if ($model->load(Yii::$app->request->post())) {
+                $password = $_post['Personalinfo']['password'];
+                if(($_post['mode']==1 && $modelUser->password!=$password) || $_post['mode']==0){
+                    $modelUser->password = md5($password);
+                }
+                $modelUser->username = $_post['Personalinfo']['username'];
+                $modelUser->save(false);
+                
+                $model->UserID=$modelUser->UserID;
+                $model->save();
                 Yii::$app->session->set('personalid',$model->PersonalID);
                 return [
                     'data' => [

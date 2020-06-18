@@ -140,6 +140,7 @@ use yii\helpers\Url;
                         ArrayHelper::map($squad, 'SquadID', 'SquadName'),["prompt"=>"Pilih"])
                 ->label("Squad") 
     ?>
+    
 
     <div class="form-group">
         <div class="col-md-3"></div>

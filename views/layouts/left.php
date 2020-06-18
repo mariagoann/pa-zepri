@@ -23,8 +23,8 @@
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
                     ['label' => 'Menu', 'options' => ['class' => 'header']],
-                    ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
-                    ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
+                    // ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
+                    // ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
                     [
                         'label' => 'Karyawan',
@@ -72,12 +72,7 @@
                             [
                                 'label' => 'Hasil Penilaian',
                                 'icon' => 'circle-o',
-                                'url' => ['#'],
-                            ],
-                            [
-                                'label' => 'Penilaian Kinerja',
-                                'icon' => 'circle-o',
-                                'url' => ['#'],
+                                'url' => ['/periode/hasil-penilaian'],
                             ],
                         ],
                         'visible' => !Yii::$app->user->isGuest
@@ -86,6 +81,12 @@
                         'label' => 'Karyawan Penilai',
                         'icon' => 'share',
                         'url' => ['/periode'],
+                        'visible' => !Yii::$app->user->isGuest
+                    ],
+                    [
+                        'label' => 'Penilaian Kinerja',
+                        'icon' => 'share',
+                        'url' => ['/paparameter'],
                         'visible' => !Yii::$app->user->isGuest
                     ],
                 ],

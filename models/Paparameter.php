@@ -28,7 +28,8 @@ use Yii;
  * @property float $OpenInnovation
  * @property string $PositiveSelfInnovation
  * @property string $NegativeSelfInnovation
- * @property float $Total
+ * @property float|null $AvgValues
+ * @property string|null $TypePA
  * @property int $PerformanceAppraisalID
  * @property int $ReviewByID
  * @property string $Status
@@ -53,10 +54,10 @@ class Paparameter extends \yii\db\ActiveRecord
     {
         return [
             [['EmployeePerformanceScore', 'TeamImprovement', 'Aspirasi', 'AGILE', 'PositifSelfAgile', 'NegativeSelfAgile', 'IMPACT', 'PositiveSelfImpact', 'NegativeSelfImpact', 'UDPE', 'PositiveSelfUDPE', 'NegativeSelfUDPE', 'Entrepreneurial', 'PositiveSelfEntrepreneurial', 'NegativeSelfEntrepreneurial', 'OpenInnovation', 'PositiveSelfInnovation', 'NegativeSelfInnovation', 'PerformanceAppraisalID', 'ReviewByID', 'Status'], 'required'],
-            [['EmployeePerformanceScore', 'AGILE', 'IMPACT', 'UDPE', 'Entrepreneurial', 'OpenInnovation', 'Total'], 'number'],
+            [['EmployeePerformanceScore', 'AGILE', 'IMPACT', 'UDPE', 'Entrepreneurial', 'OpenInnovation', 'AvgValues'], 'number'],
             [['PerformanceAppraisalID', 'ReviewByID'], 'integer'],
             [['PositiveContribution', 'SelfImprovement', 'TeamImprovement', 'Aspirasi', 'PositifSelfAgile', 'NegativeSelfAgile', 'PositiveSelfImpact', 'NegativeSelfImpact', 'PositiveSelfUDPE', 'NegativeSelfUDPE', 'PositiveSelfEntrepreneurial', 'NegativeSelfEntrepreneurial', 'PositiveSelfInnovation', 'NegativeSelfInnovation'], 'string', 'max' => 250],
-            [['Status'], 'string', 'max' => 50],
+            [['TypePA', 'Status'], 'string', 'max' => 50],
             [['PerformanceAppraisalID'], 'exist', 'skipOnError' => true, 'targetClass' => Performanceappraisal::className(), 'targetAttribute' => ['PerformanceAppraisalID' => 'PerformanceAppraisalID']],
             [['ReviewByID'], 'exist', 'skipOnError' => true, 'targetClass' => Employment::className(), 'targetAttribute' => ['ReviewByID' => 'EmployeeID']],
         ];
@@ -89,7 +90,8 @@ class Paparameter extends \yii\db\ActiveRecord
             'OpenInnovation' => 'Open Innovation',
             'PositiveSelfInnovation' => 'Positive Self Innovation',
             'NegativeSelfInnovation' => 'Negative Self Innovation',
-            'Total' => 'Total',
+            'AvgValues' => 'Avg Values',
+            'TypePA' => 'Type Pa',
             'PerformanceAppraisalID' => 'Performance Appraisal ID',
             'ReviewByID' => 'Review By ID',
             'Status' => 'Status',

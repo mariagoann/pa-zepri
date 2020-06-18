@@ -10,6 +10,10 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Performanceappraisal;
 use app\models\Employment;
+use app\models\Pastatus;
+use app\models\PacomponentSearch;
+use app\models\Pacomponent;
+use app\models\Paparameter;
 use yii\helpers\Url;
 
 /**
@@ -47,6 +51,17 @@ class PeriodeController extends Controller
         ]);
     }
 
+    public function actionHasilPenilaian()
+    {
+        $searchModel = new PeriodeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('hasilpenilaian', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Displays a single Periode model.
      * @param integer $id
@@ -55,11 +70,35 @@ class PeriodeController extends Controller
      */
     public function actionView($id)
     {
+        $_periode = $this->findModel($id);
+        $pa = Performanceappraisal::find()
+                        ->where(['PeriodeID'=>$id])
+                        ->all();
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $pa,
+            'periode'=>$_periode,
         ]);
     }
 
+    public function actionViewNilai($id, $field=null)
+    {
+        $searchModel = new PacomponentSearch();
+        $searchModel->field = $field;
+        $periode = $this->findModel($id);
+        if ($searchModel->load(Yii::$app->request->post())){
+            $_data = Yii::$app->request->post()['PacomponentSearch'];
+            $searchModel->field = $_data['field'];
+            $this->redirect(['view-nilai',
+                            'id'=>$id,
+                            'field'=>$searchModel->field]);
+        }
+        $dataProvider = $searchModel->search($field);
+        return $this->render('viewnilai', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'periode'=>$periode,
+        ]);
+    }
     /**
      * Creates a new Periode model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -68,6 +107,10 @@ class PeriodeController extends Controller
     public function actionCreate()
     {
         $model = new Periode();
+        $active = [
+            0=>'Non-Active',
+            1=>'Active'
+        ];
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
@@ -75,6 +118,7 @@ class PeriodeController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'active'=>$active,
         ]);
     }
 
@@ -88,6 +132,10 @@ class PeriodeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $active = [
+            0=>'Non-Active',
+            1=>'Active'
+        ];
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
@@ -95,6 +143,7 @@ class PeriodeController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'active'=>$active,
         ]);
     }
 
@@ -226,6 +275,63 @@ class PeriodeController extends Controller
                 'message'=>'Something went wrong.'
             ]);
         }
+    }
+
+    public function actionDetailNilai($id){
+        $_selfScore = [];
+        $_superior1score = [];
+        $_superior2score = [];
+        $_valuesPeers1=[];
+        $_valuesPeers2 = [];
+        $_valuesSubordinate1=[];
+        $_valuesSubordinate2=[];
+        $modelPAC = Pacomponent::find()
+                                ->where(['PAComponentID'=>$id])
+                                ->one();
+        if($modelPAC!=null){
+            $pa = Paparameter::find()
+                            ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
+                            ->all();
+            if($pa!=null){
+                foreach ($pa as $key => $value) {
+                    $type = explode('-',$value['TypePA']);
+                    $count =0;
+                    if(array_key_exists(1,$type)){
+                        $count = (int)$type[1];
+                    }
+                    $_temp = [
+                        'by'=>$value->reviewBy->personal->FullName,
+                        'scoreEmployee'=>number_format($value['EmployeePerformanceScore'],2),
+                        'avgValues'=>number_format($value['AvgValues'],2),
+                    ];
+                    if($type[0]=='self'){
+                        $_selfScore = $_temp;
+                    }elseif($type[0]=='superior' && $count==1){
+                        $_superior1score = $_temp;
+                    }elseif($type[0]=='superior' && $count>1){
+                        $_superior2score =$_temp;
+                    }elseif($type[0]=="peers" && $count==1){
+                        $_valuesPeers1 = $_temp;
+                    }elseif($type[0]=="peers" && $count>1){
+                        $_valuesPeers2 = $_temp;
+                    }elseif($type[0]=="subordinate" && $count==1){
+                        $_valuesSubordinate1 = $_temp;
+                    }elseif($type[0]=="subordinate" && $count>1){
+                        $_valuesSubordinate2 = $_temp;
+                    }
+                }
+            }
+        }
+        return $this->render('detailnilai',[
+            'model'=>$modelPAC,
+            'self'=>$_selfScore,
+            'peers1'=>$_valuesPeers1,
+            'peers2'=>$_valuesPeers2,
+            'superior1'=>$_superior1score,
+            'superior2'=>$_superior2score,
+            'subordinate1'=>$_valuesSubordinate1,
+            'subordinate2'=>$_valuesSubordinate2,
+        ]);
     }
 
     /**

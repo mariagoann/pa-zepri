@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 $this->title = 'Generate Karyawan Penilai';
 $this->params['breadcrumbs'][] = ['label' => 'Periode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
+$urlindex = Url::to(['index']);
 ?>
 <div class="generate-index">
     <div class='row'>
@@ -98,8 +98,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-md-10"></div>
                 <div class="col-md-2">
                     <p>
+                        <button type="button" class="btn btn-danger" id='batal'>Batal</button>
                         <button type="submit" class="btn btn-success" id='simpan'>Simpan</button>
-                        <button type="submit" class="btn btn-primary" id='kirim'>Kirim</button>
+                        <button type ="button" class="btn btn-primary" id='kirim'>Kirim</button>
                     </p>
                 </div>
             </div>
@@ -129,6 +130,10 @@ $("#generate").submit(function(e) {
         }
     });
 });
+document.getElementById("batal").onclick = function(){
+    var url = "$urlindex";
+    window.location.href=url;
+};
 JS;
 $this->registerJs($script);
 ?>

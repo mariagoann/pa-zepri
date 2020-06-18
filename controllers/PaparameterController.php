@@ -12,6 +12,8 @@ use app\models\Performanceappraisal;
 use app\models\Personalinfo;
 use app\models\Employment;
 use app\models\Pacomponent;
+use app\models\Paparemeter;
+
 
 /**
  * PaparameterController implements the CRUD actions for Paparameter model.
@@ -38,14 +40,15 @@ class PaparameterController extends Controller
      * @return mixed
      */
     public function actionIndex(){
-        $peers=null;
-        $subordinate = null;
-        $superior = null;
-        $employee = null;
+        $_tempEmployee=null;
+        $_tempPeers = null;
+        $_tempSuperior = null;
+        $_tempSubordinate = null;
         $personalinfo = Personalinfo::find()
                                 ->where(['UserID'=>Yii::$app->user->id])
                                 ->one();
         if($personalinfo!=null){
+            $by = $personalinfo->employments->EmployeeID;
             $employee = Performanceappraisal::find()
                         ->joinWith('periode')
                         ->where(['performanceappraisal.EmployeeID'=>$personalinfo->employments->EmployeeID])
@@ -53,36 +56,82 @@ class PaparameterController extends Controller
                         ->one();
             
             if($employee!=null){
-            $peers = Performanceappraisal::find()
-                            ->joinWith('periode')
-                            ->where(['performanceappraisal.PeersID1'=>$personalinfo->employments->EmployeeID])
-                            ->orWhere(['performanceappraisal.PeersID2'=>$personalinfo->employments->EmployeeID])
-                            ->andWhere(['periode.status'=>1])
-                            ->all();
+                $_tempEmployee['name'] = $employee->employee->personal->FullName;
+                $_tempEmployee['by'] = $by;
+                $_tempEmployee['id'] = $employee->PerformanceAppraisalID;
+                $_tempEmployee['type'] = 'self';
+                $_tempEmployee['status'] = $this->isEvaluate($employee->PerformanceAppraisalID, $employee->EmployeeID, 'self');
+                
+                $peers = Performanceappraisal::find()
+                                ->joinWith('periode')
+                                ->where(['performanceappraisal.PeersID1'=>$personalinfo->employments->EmployeeID])
+                                ->orWhere(['performanceappraisal.PeersID2'=>$personalinfo->employments->EmployeeID])
+                                ->andWhere(['periode.status'=>1])
+                                ->all();
+                $i=1;
+                foreach ($peers as $key => $value) {
+                    $_tempPeers[$i]['name'] = $value->employee->personal->FullName;
+                    $_tempPeers[$i]['by'] = $by;
+                    $_tempPeers[$i]['id'] = $value->PerformanceAppraisalID;
+                    $_tempPeers[$i]['type'] = 'peers-'.$i;
+                    $_tempPeers[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'peers-'.$i);
+                    $i++;
+                }
 
-            $superior = Performanceappraisal::find()
-                            ->joinWith('periode')
-                            ->where(['performanceappraisal.SuperiorID1'=>$personalinfo->employments->EmployeeID])
-                            ->andWhere(['periode.status'=>1])
-                            ->all();
-            //check for superior2
-            $subordinate = Performanceappraisal::find()
-                            ->joinWith('periode')
-                            ->where(['performanceappraisal.SubordinateID1'=>$personalinfo->employments->EmployeeID])
-                            ->orWhere(['performanceappraisal.SubordinateID2'=>$personalinfo->employments->EmployeeID])
-                            ->andWhere(['periode.status'=>1])
-                            ->all();
+                $superior = Performanceappraisal::find()
+                                ->joinWith('periode')
+                                ->where(['performanceappraisal.SuperiorID1'=>$personalinfo->employments->EmployeeID])
+                                ->andWhere(['periode.status'=>1])
+                                ->all();
+                $i=1;
+                foreach ($superior as $key => $value) {
+                    $_tempSuperior[$i]['name'] = $value->employee->personal->FullName;
+                    $_tempSuperior[$i]['by'] = $by;
+                    $_tempSuperior[$i]['id'] = $value->PerformanceAppraisalID;
+                    $_tempSuperior[$i]['type'] = 'superior-'.$i;
+                    $_tempSuperior[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'superior-'.$i);
+                    $i++;
+                }
+                //check for superior2
+                $subordinate = Performanceappraisal::find()
+                                ->joinWith('periode')
+                                ->where(['performanceappraisal.SubordinateID1'=>$personalinfo->employments->EmployeeID])
+                                ->orWhere(['performanceappraisal.SubordinateID2'=>$personalinfo->employments->EmployeeID])
+                                ->andWhere(['periode.status'=>1])
+                                ->all();
+                $i=1;
+                foreach ($subordinate as $key => $value) {
+                    $_tempSubordinate[$i]['name'] = $value->employee->personal->FullName;
+                    $_tempSubordinate[$i]['by'] = $by;
+                    $_tempSubordinate[$i]['id'] = $value->PerformanceAppraisalID;
+                    $_tempSubordinate[$i]['type'] = 'subordinate-'.$i;
+                    $_tempSubordinate[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'subordinate-'.$i);
+                    $i++;
+                }
             }
         }
-
         return $this->render('index', [
-            'employee'=>$employee,
-            'peers'=>$peers,
-            'superior'=>$superior,
-            'subordinate'=>$subordinate
+            'employee'=>$_tempEmployee,
+            'peers'=>$_tempPeers,
+            'superior'=>$_tempSuperior,
+            'subordinate'=>$_tempSubordinate
         ]);
     }
 
+    /**
+     * {performance appraisal id} {id reviewer} {type}
+     */
+    private function isEvaluate($idpa,$idreviewer,$type){
+        $_check = Paparameter::find()
+                            ->where(['PerformanceAppraisalID'=>$idpa])
+                            ->andWhere(['TypePA'=>$type])
+                            ->andWhere(['ReviewByID'=>$idreviewer])
+                            ->one();
+        if($_check!=null){
+            return true;
+        }
+        return false;
+    }
     /**
      * Displays a single Paparameter model.
      * @param integer $id
@@ -102,15 +151,7 @@ class PaparameterController extends Controller
      * @return mixed
      * {employeeid by} {performance appraisal id} {type}
      */
-    public function actionNilai($by,$id,$type)
-    {   
-        $value = [
-            1=>'1',
-            2=>'2',
-            3=>'3',
-            4=>'4',
-            5=>'5'
-        ];
+    public function actionNilai($by,$id,$type){   
         $judul = $this->mapType($type);
         $prfmaprsl = Performanceappraisal::find()
                                     ->where(['PerformanceAppraisalID'=>$id])
@@ -122,43 +163,223 @@ class PaparameterController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             //save paparameter
             $post = Yii::$app->request->post();
-            $performancescore = int($post['Paparameter']['EmployeePerformanceScore']);
-            $agile = int($post['Paparameter']['AGILE']);
-            $impact = int($post['Paparameter']['IMPACT']);
-            $udpe = int($post['Paparameter']['UDPE']);
-            $entrepreneurial = int($post['Paparameter']['Entrepreneurial']);
-            $innovation = int($post['Paparameter']['OpenInnovation']);
-            $model->total = $performancescore + $agile + $impact + $udpe
+            $agile = floatval($post['Paparameter']['AGILE']);
+            $impact = floatval($post['Paparameter']['IMPACT']);
+            $udpe = floatval($post['Paparameter']['UDPE']);
+            $entrepreneurial = floatval($post['Paparameter']['Entrepreneurial']);
+            $innovation = floatval($post['Paparameter']['OpenInnovation']);
+            $total = $agile + $impact + $udpe
                                 + $entrepreneurial + $innovation;
+            $average = floatval($total/5);
+            $model->AvgValues = $average;
+            $model->TypePA = $type;
             $model->PerformanceAppraisalID = $id;
             $model->ReviewByID = $by;
-            $model->save();
+            $model->save(false);
             //doCalculation
-            $calculate = $this->doCalculation($id, $prfmaprsl->EmployeeID, $prfmaprsl->PeriodeID, $type);
-            return $this->redirect(['view', 'id' => $model->PAParameterID]);
+            $calculate = $this->doCalculation($id);
+            if($calculate){
+                if(!Yii::$app->session->has('success')){
+                    Yii::$app->session->setFlash('success', "Anda berhasil melakukan penilaian. Terima Kasih.");
+                }
+            }else{
+                if(!Yii::$app->session->has('error')){
+                    Yii::$app->session->setFlash('error', "Terdapat Kesalahan.");
+                }
+            }
+            return $this->redirect(['index']);
         }
         return $this->render('create', [
             'judul'=>$judul,
             'model' => $model,
             'prfmaprsl'=>$prfmaprsl,
             'employee'=>$employee,
-            'value'=>$value,
+        ]);
+    }
+
+    public function actionUbahnilai($by,$id,$type){   
+        $judul = $this->mapType($type);
+        $prfmaprsl = Performanceappraisal::find()
+                                    ->where(['PerformanceAppraisalID'=>$id])
+                                    ->one();
+        $employee = Employment::find()
+                                ->where(['EmployeeID'=>$prfmaprsl->EmployeeID])
+                                ->one();
+        $model = Paparameter::find()
+                                ->where(['TypePA'=>$type])
+                                ->andWhere(['PerformanceAppraisalID'=>$id])
+                                ->andWhere(['ReviewByID'=>$by])
+                                ->one();
+        if ($model->load(Yii::$app->request->post())) {
+            //save paparameter
+            $post = Yii::$app->request->post();
+            $agile = floatval($post['Paparameter']['AGILE']);
+            $impact = floatval($post['Paparameter']['IMPACT']);
+            $udpe = floatval($post['Paparameter']['UDPE']);
+            $entrepreneurial = floatval($post['Paparameter']['Entrepreneurial']);
+            $innovation = floatval($post['Paparameter']['OpenInnovation']);
+            $total = $agile + $impact + $udpe
+                                + $entrepreneurial + $innovation;
+            $average = floatval($total/5);
+            $model->AvgValues = $average;
+            $model->TypePA = $type;
+            $model->PerformanceAppraisalID = $id;
+            $model->ReviewByID = $by;
+            $model->save(false);
+            //doCalculation
+            $calculate = $this->doCalculation($id);
+            if($calculate){
+                if(!Yii::$app->session->has('success')){
+                    Yii::$app->session->setFlash('success', "Anda berhasil melakukan penilaian. Terima Kasih.");
+                }
+            }else{
+                if(!Yii::$app->session->has('error')){
+                    Yii::$app->session->setFlash('error', "Terdapat Kesalahan.");
+                }
+            }
+            return $this->redirect(['index']);
+        }
+        return $this->render('update', [
+            'judul'=>$judul,
+            'model' => $model,
+            'prfmaprsl'=>$prfmaprsl,
+            'employee'=>$employee,
         ]);
     }
 
     /**
-     * {performanceappraisal id, employee id, periode id, type}
+     * {performanceappraisal id, employee id}
      */
-    private function doCalculation($idpa, $idemployee, $idperiode, $type){
-        $model = Pacomponent::find()
-                            ->where(['PerformanceAppraisalID'=>$idpa])
-                            ->andWhere(['EmployeeID'=>$idemployee])
-                            ->andWhere(['PeriodeID'=>$idperiode])
-                            ->one();
-        if($model==null){
-            $model = new Pacomponent();
+    private function doCalculation($idpa){
+        //get all pa
+        $_allpa = Paparameter::find()
+                                ->where(['PerformanceAppraisalID'=>$idpa])
+                                ->all();
+        $_pa = Performanceappraisal::find()
+                                ->where(['PerformanceAppraisalID'=>$idpa])
+                                ->one();
+        $_positionReviwee = $_pa->employee->jobPosition->JobPositionName;
+        if($_allpa!=null){
+            $_temp=[];
+            $i=0; $j=0; $k=0; $l=0;
+            foreach ($_allpa as $key => $value) {
+                if(strpos($value->TypePA, 'self')!==false){
+                    $_avgValues = floatval((10/100 * $value->AvgValues));
+                    $_temp['self'][$i] = [
+                        'performancescore'=>$value->EmployeePerformanceScore,
+                        'avg'=>$_avgValues,
+                    ];
+                    $i++;
+                }elseif(strpos($value->TypePA, 'superior')!==false){
+                    $_isSuperior = $this->isSuperior($value->performanceAppraisal->EmployeeID);
+                    $_avgValues = 0;
+                    if(strtolower($_positionReviwee)=='head' || $_isSuperior==false){
+                        $_avgValues = floatval((75/100 * $value->AvgValues));
+                    }else{
+                        $_avgValues = floatval((60/100 * $value->AvgValues));
+                    }
+                    $_temp['superior'][$j]=  [
+                        'performancescore'=>$value->EmployeePerformanceScore,
+                        'avg'=>$_avgValues,
+                    ];
+                    $j++;
+                }elseif(strpos($value->TypePA, 'subordinate')!==false){
+                    $_avgValues = floatval((15/100 * $value->AvgValues));
+                    $_temp['subordinate'][$k]=[
+                        'performancescore'=>$value->EmployeePerformanceScore,
+                        'avg'=>$_avgValues,
+                    ];
+                    $k++;
+                }elseif(strpos($value->TypePA, 'peers')!==false){
+                    $_avgValues = floatval((15/100 * $value->AvgValues));
+                    $_temp['peers'][$l]=  [
+                        'performancescore'=>$value->EmployeePerformanceScore,
+                        'avg'=>$_avgValues,
+                    ];
+                    $l++;
+                }
+            }
+            $_selfAvg=0;
+            $_superiorAvg=0;
+            $_peersAvg= 0;
+            $_subordinateAvg = 0;
+            $_performanceFrSelf = 0;
+            $_performanceFrSuperior = 0;
+            if(array_key_exists('self',$_temp)){
+                $_total = 0;
+                $i=0;
+                $_positionReviewer ="";
+                foreach ($_temp['self'] as $key => $value) {
+                    $_performanceFrSelf += $value['performancescore'];
+                    $_total += $value['avg'];
+                    $i++;
+                }
+                $_selfAvg = floatval($_total/$i);
+            }
+            if(array_key_exists('superior',$_temp)){
+                $_total = 0;
+                $i=0;
+                $_totalPrf=0;
+                foreach ($_temp['superior'] as $key => $value) {
+                    $_totalPrf += $value['performancescore'];
+                    $_total += $value['avg'];
+                    $i++;
+                }
+                $_superiorAvg = floatval($_total/$i);
+                $_performanceFrSuperior = floatval($_totalPrf/$i);
+            }
+            if(array_key_exists('peers',$_temp)){
+                $_total = 0;
+                $i=0;
+                foreach ($_temp['peers'] as $key => $value) {
+                    $_total += $value['avg'];
+                    $i++;
+                }
+                $_peersAvg = floatval($_total/$i);
+            }
+            if(array_key_exists('subordinate',$_temp)){
+                $_total = 0;
+                $i=0;
+                foreach ($_temp['subordinate'] as $key => $value) {
+                    $_total += $value['avg'];
+                    $i++;
+                }
+                $_subordinateAvg = floatval($_total/$i);
+            }
+            $_totalSelfAvg = floatval(((20/100)*$_performanceFrSelf) + ((80/100)*$_performanceFrSuperior));
+            $_totalValues = floatval($_selfAvg + $_superiorAvg + $_subordinateAvg + $_peersAvg);
+            $_result = floatval(((80/100)*$_totalSelfAvg) + ((20/100)*$_totalValues));
+            
+            //save pacomponent
+            $modelPAC = Pacomponent::find()
+                                ->where(['PerformanceAppraisalID'=>$idpa])
+                                ->one();
+            if($modelPAC==null){
+                $modelPAC = new Pacomponent();
+            }
+            $modelPAC->PerformanceAppraisalID = $idpa;
+            $modelPAC->Self = $_selfAvg;
+            $modelPAC->Peers = $_peersAvg;
+            $modelPAC->SubordinatesToSuperior = $_subordinateAvg;
+            $modelPAC->SuperiorToSubordinates = $_superiorAvg;
+            $modelPAC->EmployeeScore  = $_totalSelfAvg;
+            $modelPAC->EmployeeID = $_pa->employee->EmployeeID;
+            $modelPAC->PeriodeID = $_pa->PeriodeID;
+            $modelPAC->TotalScore =$_result;
+            $modelPAC->save(false);
+            return true;
         }
-        $type = explode('-',$type);
+        return false;
+    }
+
+    private function isSuperior($idemployee){
+        $find = Employment::find()
+                        ->where(['EmployeeSuperiorID'=>$idemployee])
+                        ->all();
+        if($find!=null){
+            return true;
+        }
+        return false;
     }
 
     private function mapType($type){

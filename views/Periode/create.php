@@ -12,6 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="periode-create">
     <?= $this->render('_form', [
         'model' => $model,
+        'active'=>$active,
     ]) ?>
 
 </div>

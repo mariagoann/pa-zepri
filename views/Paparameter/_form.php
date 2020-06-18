@@ -65,6 +65,10 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
             ],
         ]);
     ?>
+    <?php
+        $type = explode('-', $_GET['type']);
+        if($type[0]=="self" || $type[0]=="superior"){
+    ?>
     <div class='row'>
         <div class=col-md-1></div>
         <div class='col-md-10'>
@@ -106,16 +110,20 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         <div class='col-md-10'>
             <?= $form->field($model, 'EmployeePerformanceScore', ['horizontalCssClasses' => 
                                 [
-                                    'wrapper'=>'col-md-7',
+                                    'wrapper'=>'col-md-3',
                                     'label'=>'col-md-5'
                                 ]
                             ])
                 ->inline()
-                ->radioList($value)
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
                 ->label("Skor Kinerja Karayawan");
             ?>
         </div>
     </div>
+    <?php
+        }
+    ?>
+
     <div class='row'>
         <div class=col-md-1></div>
         <div class='col-md-10'>
@@ -163,12 +171,12 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         <div class='col-md-10'>
             <?= $form->field($model, 'AGILE', ['horizontalCssClasses' => 
                                 [
-                                    'wrapper'=>'col-md-7',
+                                    'wrapper'=>'col-md-3',
                                     'label'=>'col-md-5'
                                 ]
                             ])
                 ->inline()
-                ->radioList($value)
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
                 ->label('AGILE : Kita gercep (gerak cepat), dengan menerapkan organisasi yang ramping, 
                             siklus belajar cepat, di lingkungan yang berorientasikan data. ')
             ?>
@@ -209,12 +217,12 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         <div class='col-md-10'>
             <?= $form->field($model, 'IMPACT', ['horizontalCssClasses' => 
                                 [
-                                    'wrapper'=>'col-md-7',
+                                    'wrapper'=>'col-md-3',
                                     'label'=>'col-md-5'
                                 ]
                             ])
                 ->inline()
-                ->radioList($value)
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
                 ->label('IMPACT: Kita mengembangkan kemampuan untuk bisa memberdayakan orang lain - termasuk anggota tim dan pelanggan, 
                         sehingga menciptakan dampak positif sebanyak mungkin bagi masyarakat.')
             ?>
@@ -254,12 +262,12 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         <div class='col-md-10'>
             <?= $form->field($model, 'UDPE', ['horizontalCssClasses' => 
                                 [
-                                    'wrapper'=>'col-md-7',
+                                    'wrapper'=>'col-md-3',
                                     'label'=>'col-md-5'
                                 ]
                             ])
                 ->inline()
-                ->radioList($value)
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
                 ->label('User-driven Performance Excellence : Pelanggan selalu di hati kita. 
                         Kemajuan mereka adalah kemajuan kita juga. Kita membantu pelanggan meraih hasil terbaik mereka dengan mengerahkan 
                         kemampuan terbaik dan kinerja yang unggul.')
@@ -300,12 +308,12 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         <div class='col-md-10'>
             <?= $form->field($model, 'Entrepreneurial', ['horizontalCssClasses' => 
                                 [
-                                    'wrapper'=>'col-md-7',
+                                    'wrapper'=>'col-md-3',
                                     'label'=>'col-md-5'
                                 ]
                             ])
                 ->inline()
-                ->radioList($value)
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
                 ->label('Entrepreneurial : Kita memastikan pertumbuhan perusahaan dimotori oleh semangat bereksplorasi dan mentalitas kewirausahaan. 
                         Selalu ada ruang untuk bermimpi, bereksperimen dengan berani, dan membina rasa suka cita pada reka-cipta.')
             ?>
@@ -345,12 +353,12 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         <div class='col-md-10'>
             <?= $form->field($model, 'OpenInnovation', ['horizontalCssClasses' => 
                                 [
-                                    'wrapper'=>'col-md-7',
+                                    'wrapper'=>'col-md-3',
                                     'label'=>'col-md-5'
                                 ]
                             ])
                 ->inline()
-                ->radioList($value)
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
                 ->label('Open Innovation : Kita berinovasi melalui kreatifitas yang dirangkul dalam sikap yang serba terbuka; 
                         keterbukaan pola pikir, terbuka dalam menerima tanggapan, dan membuat lingkungan kerja yang
                          membudayakan kelugasan berbicara.')

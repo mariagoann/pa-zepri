@@ -84,7 +84,8 @@ class SiteController extends Controller
             if($personalinfo!=null){
                 Yii::$app->session->set('fullname',$personalinfo->FullName);
             }
-            return $this->goBack();
+            // return $this->goBack();
+            return $this->redirect(['index']);
         }
 
         $model->password = '';

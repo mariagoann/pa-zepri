@@ -31,6 +31,8 @@ use Yii;
  */
 class Personalinfo extends \yii\db\ActiveRecord
 {
+    public $username;
+    public $password;
     /**
      * {@inheritdoc}
      */

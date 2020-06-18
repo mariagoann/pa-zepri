@@ -159,6 +159,30 @@ use yii\helpers\Url;
             ->label('Email')
     ?>
 
+    <?php
+        if(!$model->isNewRecord && $model->UserID!=null){
+         echo $form->field($model, 'username', ['horizontalCssClasses' => ['wrapper' => 'col-md-3']])
+            ->textInput(['placeholder'=>'Masukkan Username', 'value'=>$model->user->username])
+            ->label('Username');
+
+        echo $form->field($model, 'password', ['horizontalCssClasses' => ['wrapper' => 'col-md-3']])
+                ->passwordInput(['placeholder'=>'Masukkan Password', 'value'=>$model->user->password])
+                ->label('Password');
+        }else{
+
+
+            echo $form->field($model, 'username', ['horizontalCssClasses' => ['wrapper' => 'col-md-3']])
+            ->textInput(['placeholder'=>'Masukkan Username'])
+            ->label('Username');
+
+            echo $form->field($model, 'password', ['horizontalCssClasses' => ['wrapper' => 'col-md-3']])
+            ->passwordInput(['placeholder'=>'Masukkan Password'])
+            ->label('Password');
+        }
+    ?>
+
+
+
     <div class="form-group">
         <div class="col-md-3"></div>
         <div class="col-md-3">

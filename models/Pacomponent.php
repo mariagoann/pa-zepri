@@ -12,11 +12,12 @@ use Yii;
  * @property float $Self
  * @property float $Peers
  * @property float $SubordinatesToSuperior
- * @property float $SuperiorToSubOrdinates
+ * @property float $SuperiorToSubordinates
+ * @property float $EmployeeScore
+ * @property float|null $TotalScore
  * @property int $EmployeeID
  * @property int $PeriodeID
- * @property float $Total
- * @property string $TrackRecord
+ * @property string|null $TrackRecord
  *
  * @property Performanceappraisal $performanceAppraisal
  * @property Employment $employee
@@ -38,10 +39,10 @@ class Pacomponent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['PerformanceAppraisalID', 'Self', 'Peers', 'SubordinatesToSuperior', 'SuperiorToSubOrdinates', 'EmployeeID', 'PeriodeID', 'Total', 'TrackRecord'], 'required'],
+            [['PerformanceAppraisalID', 'Self', 'Peers', 'SubordinatesToSuperior', 'SuperiorToSubordinates', 'EmployeeScore', 'EmployeeID', 'PeriodeID'], 'required'],
             [['PerformanceAppraisalID', 'EmployeeID', 'PeriodeID'], 'integer'],
-            [['Self', 'Peers', 'SubordinatesToSuperior', 'SuperiorToSubOrdinates', 'Total'], 'number'],
-            [['TrackRecord'], 'string', 'max' => 150],
+            [['Self', 'Peers', 'SubordinatesToSuperior', 'SuperiorToSubordinates', 'EmployeeScore', 'TotalScore'], 'number'],
+            [['TrackRecord'], 'string', 'max' => 250],
             [['PerformanceAppraisalID'], 'exist', 'skipOnError' => true, 'targetClass' => Performanceappraisal::className(), 'targetAttribute' => ['PerformanceAppraisalID' => 'PerformanceAppraisalID']],
             [['EmployeeID'], 'exist', 'skipOnError' => true, 'targetClass' => Employment::className(), 'targetAttribute' => ['EmployeeID' => 'EmployeeID']],
             [['PeriodeID'], 'exist', 'skipOnError' => true, 'targetClass' => Periode::className(), 'targetAttribute' => ['PeriodeID' => 'PeriodeID']],
@@ -59,10 +60,11 @@ class Pacomponent extends \yii\db\ActiveRecord
             'Self' => 'Self',
             'Peers' => 'Peers',
             'SubordinatesToSuperior' => 'Subordinates To Superior',
-            'SuperiorToSubOrdinates' => 'Superior To Sub Ordinates',
+            'SuperiorToSubordinates' => 'Superior To Subordinates',
+            'EmployeeScore' => 'Employee Score',
+            'TotalScore' => 'Total Score',
             'EmployeeID' => 'Employee ID',
             'PeriodeID' => 'Periode ID',
-            'Total' => 'Total',
             'TrackRecord' => 'Track Record',
         ];
     }

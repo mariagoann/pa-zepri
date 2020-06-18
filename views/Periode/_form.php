@@ -79,6 +79,7 @@ use yii\jui\DatePicker;
                     'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control']
     ])->label('Tanggal Akhir Penilaian') ?>
 
+    <?=$form->field($model, 'Status')->label(true)->inline()->radioList($active)->label("Status");?>
     <div class="form-group">
         <div class="col-md-3"></div>
         <div class="col-md-3">
