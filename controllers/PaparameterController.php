@@ -13,8 +13,8 @@ use app\models\Personalinfo;
 use app\models\Employment;
 use app\models\Pacomponent;
 use app\models\Paparemeter;
-
-
+use app\models\PeriodeSearch;
+use app\models\Periode;
 /**
  * PaparameterController implements the CRUD actions for Paparameter model.
  */
@@ -39,7 +39,7 @@ class PaparameterController extends Controller
      * Lists all Paparameter models.
      * @return mixed
      */
-    public function actionIndex(){
+    public function actionIndex($id){
         $_tempEmployee=null;
         $_tempPeers = null;
         $_tempSuperior = null;
@@ -47,12 +47,17 @@ class PaparameterController extends Controller
         $personalinfo = Personalinfo::find()
                                 ->where(['UserID'=>Yii::$app->user->id])
                                 ->one();
+        $periode = Periode::find()
+                            ->where(['PeriodeID'=>$id])
+                            ->one();
         if($personalinfo!=null){
             $by = $personalinfo->employments->EmployeeID;
             $employee = Performanceappraisal::find()
                         ->joinWith('periode')
                         ->where(['performanceappraisal.EmployeeID'=>$personalinfo->employments->EmployeeID])
                         ->andWhere(['periode.status'=>1])
+                        ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                        ->andWhere(['performanceappraisal.Status'=>'1'])
                         ->one();
             
             if($employee!=null){
@@ -67,6 +72,8 @@ class PaparameterController extends Controller
                                 ->where(['performanceappraisal.PeersID1'=>$personalinfo->employments->EmployeeID])
                                 ->orWhere(['performanceappraisal.PeersID2'=>$personalinfo->employments->EmployeeID])
                                 ->andWhere(['periode.status'=>1])
+                                ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                                ->andWhere(['performanceappraisal.Status'=>'1'])
                                 ->all();
                 $i=1;
                 foreach ($peers as $key => $value) {
@@ -82,6 +89,8 @@ class PaparameterController extends Controller
                                 ->joinWith('periode')
                                 ->where(['performanceappraisal.SuperiorID1'=>$personalinfo->employments->EmployeeID])
                                 ->andWhere(['periode.status'=>1])
+                                ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                                ->andWhere(['performanceappraisal.Status'=>'1'])
                                 ->all();
                 $i=1;
                 foreach ($superior as $key => $value) {
@@ -98,6 +107,8 @@ class PaparameterController extends Controller
                                 ->where(['performanceappraisal.SubordinateID1'=>$personalinfo->employments->EmployeeID])
                                 ->orWhere(['performanceappraisal.SubordinateID2'=>$personalinfo->employments->EmployeeID])
                                 ->andWhere(['periode.status'=>1])
+                                ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                                ->andWhere(['performanceappraisal.Status'=>'1'])
                                 ->all();
                 $i=1;
                 foreach ($subordinate as $key => $value) {
@@ -114,7 +125,18 @@ class PaparameterController extends Controller
             'employee'=>$_tempEmployee,
             'peers'=>$_tempPeers,
             'superior'=>$_tempSuperior,
-            'subordinate'=>$_tempSubordinate
+            'subordinate'=>$_tempSubordinate,
+            'periode'=>$periode,
+        ]);
+    }
+
+    public function actionEvaluates(){
+        $searchModel = new PeriodeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('evaluates', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -156,6 +178,13 @@ class PaparameterController extends Controller
         $prfmaprsl = Performanceappraisal::find()
                                     ->where(['PerformanceAppraisalID'=>$id])
                                     ->one();
+        //check kedaluarsa
+        if(date('Y-m-d')>$prfmaprsl->periode->LastModified){
+            if(!Yii::$app->session->has('outofdate')){
+                Yii::$app->session->setFlash('outofdate', "Batas penilaian telah berakhir!");
+                return $this->redirect(['evaluates']);
+            }
+        }
         $employee = Employment::find()
                                 ->where(['EmployeeID'=>$prfmaprsl->EmployeeID])
                                 ->one();
@@ -187,7 +216,7 @@ class PaparameterController extends Controller
                     Yii::$app->session->setFlash('error', "Terdapat Kesalahan.");
                 }
             }
-            return $this->redirect(['index']);
+            return $this->redirect(['index','id'=>$prfmaprsl->PeriodeID]);
         }
         return $this->render('create', [
             'judul'=>$judul,
@@ -202,6 +231,12 @@ class PaparameterController extends Controller
         $prfmaprsl = Performanceappraisal::find()
                                     ->where(['PerformanceAppraisalID'=>$id])
                                     ->one();
+        if(date('Y-m-d')>$prfmaprsl->periode->LastModified){
+            if(!Yii::$app->session->has('outofdate')){
+                Yii::$app->session->setFlash('outofdate', "Batas penilaian telah berakhir!");
+            }
+            return $this->redirect(['evaluates']);
+        }
         $employee = Employment::find()
                                 ->where(['EmployeeID'=>$prfmaprsl->EmployeeID])
                                 ->one();
@@ -237,7 +272,7 @@ class PaparameterController extends Controller
                     Yii::$app->session->setFlash('error', "Terdapat Kesalahan.");
                 }
             }
-            return $this->redirect(['index']);
+            return $this->redirect(['index','id'=>$prfmaprsl->PeriodeID]);
         }
         return $this->render('update', [
             'judul'=>$judul,

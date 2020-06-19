@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 $this->title = 'Daftar Karyawan Penilai';
 $this->params['breadcrumbs'][] = ['label' => 'Periode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-$urlindex = Url::to(['index']);
+$urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
 ?>
 <div class="view">
     <div class='row'>
@@ -84,9 +84,23 @@ $urlindex = Url::to(['index']);
 <?php
 $script = <<< JS
 document.getElementById("kirim").onclick = function(){
-    alert('kirim');
-    var url = "$urlindex";
-    window.location.href=url;
+    var url = "$urlkirim";
+    console.log(url);
+    var data = {status:'1'};
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: data,
+        success: function(response)
+        {
+            var response = JSON.parse(response);
+            alert(response.message);
+            window.location.href = response.url;
+        },
+        error: function(){
+            alert('Something went wrong');
+        }
+    });
 };
 JS;
 $this->registerJs($script);

@@ -80,6 +80,27 @@ class PeriodeController extends Controller
         ]);
     }
 
+    public function actionKirim($id){
+        // $update = Yii::$app->db->createCommand("UPDATE performanceappraisal SET Status=:column1
+        //                                              WHERE PeriodeID=:id"
+        //                                              )
+        //                                     ->bindValue(':id', $ID)
+        //                                     ->bindValue(':column1', :1)
+        //                                     ->execute();
+        $update = Performanceappraisal::updateAll(['Status' => '1'], ['=','PeriodeID', $id]);
+        if($update){
+            echo json_encode([
+                'status'=>1,
+                'message'=>"All data have been activated successfully.",
+                'url'=>Url::to(['index']),
+            ]);
+        }else{
+            echo json_encode([
+                'status'=>0,
+                'message'=>'Something went wrong'
+            ]);
+        }
+    }
     public function actionViewNilai($id, $field=null)
     {
         $searchModel = new PacomponentSearch();
@@ -162,16 +183,18 @@ class PeriodeController extends Controller
     }
 
     public function actionGenerate($id){
-        $_employee = Employment::find()->all();
         $_periode = $this->findModel($id);
+        $_employee = Employment::find()
+                                ->where(['<', 'JoinDate', $_periode->Start])
+                                ->all();
         $_arr = [];
         if($_employee!=null){
             $i=0;
             foreach ($_employee as $key => $_value) {
                $__peers = null;
                $__subordinate = null;
-               $_squad = $this->getPeers($_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
-               $_subordinate = $this->getSubordinate($_value->EmployeeID);
+               $_squad = $this->getPeers($id,$_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
+               $_subordinate = $this->getSubordinate($id,$_value->EmployeeID);
                if($_squad!=null){
                  $j=0;
                  foreach ($_squad as $key => $value) {
@@ -218,27 +241,32 @@ class PeriodeController extends Controller
             'arr'=>$_arr
         ]);
     }
-    private function getPeers($sqid,$jpid, $orid, $except){
+    private function getPeers($idp,$sqid,$jpid, $orid, $except){
+        $periode = $this->findModel($idp);
         $_squad = Employment::find()
                             ->where(['SquadID'=>$sqid])
                             ->andWhere(['JobPositionID'=>$jpid])
                             ->andWhere(['<>','EmployeeID',$except])
+                            ->andWhere(['<', 'JoinDate', $periode->Start])
                             ->all();
         if($sqid==null){
             $_squad = Employment::find()
                         ->where(['OrganizationID'=>$orid])
                         ->andWhere(['JobPositionID'=>$jpid])
                         ->andWhere(['<>','EmployeeID',$except])
+                        ->andWhere(['<', 'JoinDate', $periode->Start])
                         ->all();
         }
         shuffle($_squad);
         return $_squad;
     }
 
-    private function getSubordinate($employeeid){
+    private function getSubordinate($idp,$employeeid){
+        $periode = $this->findModel($idp);
         $_subordinate = Employment::find()
                                 ->where(['EmployeeSuperiorID'=>$employeeid])
                                 ->andWhere(['<>','EmployeeID',$employeeid])
+                                ->andWhere(['<', 'JoinDate', $periode->Start])
                                 ->all();
         shuffle($_subordinate);
         return $_subordinate;
@@ -252,6 +280,7 @@ class PeriodeController extends Controller
             $_superior1 = $_POST['superiorid1'];
             $_subordinate1 = $_POST['subordinate1id'];
             $_subordinate2 = $_POST['subordinate2id'];
+            $_mode = $_POST['mode'];
             for ($i=0; $i < count($_employee) ; $i++) { 
                 $model = new Performanceappraisal();
                 $model->EmployeeID = $_employee[$i];
@@ -262,11 +291,16 @@ class PeriodeController extends Controller
                 $model->SubordinateID1 = $_subordinate1[$i]==0?null:$_subordinate1[$i];
                 $model->SubordinateID2 = $_subordinate2[$i]==0?null:$_subordinate2[$i];
                 $model->PeriodeID = $id;
+                $model->Status = $_mode;
                 $model->save(false);
+            }
+            $message = 'Data Has been saved.';
+            if($_mode==1){
+                $message = 'Data has been saved and all status are activated.';
             }
             echo json_encode([
                 'status'=>1,
-                'message'=>'Data has been saved.',
+                'message'=>$message,
                 'url'=>Url::to(['index']),
             ]);
         }else{

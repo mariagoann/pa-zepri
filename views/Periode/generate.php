@@ -51,6 +51,7 @@ $urlindex = Url::to(['index']);
                 </thead>
                 <tbody>
                     <?php
+                        echo "<input type='hidden' name='mode' id='mode' value=0 />";
                         $i=1;
                         foreach ($arr as $key => $value) {
                             echo "<tr>";
@@ -99,7 +100,7 @@ $urlindex = Url::to(['index']);
                 <div class="col-md-2">
                     <p>
                         <button type="button" class="btn btn-danger" id='batal'>Batal</button>
-                        <button type="submit" class="btn btn-success" id='simpan'>Simpan</button>
+                        <button type="button" class="btn btn-success" id='simpan'>Simpan</button>
                         <button type ="button" class="btn btn-primary" id='kirim'>Kirim</button>
                     </p>
                 </div>
@@ -111,14 +112,31 @@ $urlindex = Url::to(['index']);
 
 <?php
 $script = <<< JS
-$("#generate").submit(function(e) {
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-    var form = $(this);
-    var url = form.attr('action');
+// $("#generate").submit(function(e) {
+//     e.preventDefault(); // avoid to execute the actual submit of the form.
+//     var form = $(this);
+//     var url = form.attr('action');
+//     var _data = form.serialize();
+//     $.ajax({
+//         type: form.attr('method'),
+//         url: url,
+//         data: _data, // serializes the form's elements.
+//         success: function(response)
+//         {
+//             var response = JSON.parse(response);
+//             alert(response.message);
+//             window.location.href = response.url;
+//         },
+//         error: function(){
+//             alert('Something went wrong');
+//         }
+//     });
+// });
+function execute(method, url,datas){
     $.ajax({
-        type: form.attr('method'),
+        type: method,
         url: url,
-        data: form.serialize(), // serializes the form's elements.
+        data: datas, // serializes the form's elements.
         success: function(response)
         {
             var response = JSON.parse(response);
@@ -129,10 +147,25 @@ $("#generate").submit(function(e) {
             alert('Something went wrong');
         }
     });
-});
+}
+document.getElementById('simpan').onclick = function(e){
+    e.preventDefault();
+    var form = $("#generate");
+    var url = form.attr('action');
+    var method = form.attr('method');
+    execute(method, url,form.serialize());
+};
 document.getElementById("batal").onclick = function(){
     var url = "$urlindex";
     window.location.href=url;
+};
+document.getElementById('kirim').onclick = function(e){
+    e.preventDefault();
+    var form = $("#generate");
+    var url = form.attr('action');
+    var method = form.attr('method');
+    document.getElementById("mode").value = 1;
+    execute(method, url,form.serialize());
 };
 JS;
 $this->registerJs($script);

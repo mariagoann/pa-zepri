@@ -9,6 +9,7 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Daftar Karyawan yang Harus Anda Nilai';
+$this->params['breadcrumbs'][] = ['label' => 'Daftar Periode Penilaian', 'url' => ['evaluates',]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="generate-index">
@@ -26,6 +27,17 @@ $this->params['breadcrumbs'][] = $this->title;
          <?= Yii::$app->session->getFlash('error') ?>
     </div>
 <?php endif; ?>
+
+<div class='row'>
+    <div class='col-md-2'>
+        <p><h4>Periode Penilaian</h4></p>
+    </div>
+    <div class='col-md-3'>
+        <p>
+            <h4><?php echo Yii::$app->formatter->format($periode->Start, 'date')." - ".Yii::$app->formatter->format($periode->End, 'date' )?></h4>
+        </p>
+    </div>
+</div>
 
 <?php
     if($employee!=null){
