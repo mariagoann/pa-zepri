@@ -27,7 +27,14 @@ $urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
         <div class='col-md-6'>
             <p>
                 <?= Html::a('Export ToExcel', ['index'], ['class' => 'btn btn-success']) ?>
-                <?= Html::a('Ubah Karyawan Penilai', ['index'], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Ubah Karyawan Penilai', ['update-existing', 'id'=>$_GET['id']], ['class' => 'btn btn-primary']) ?>
+                <?php
+                    if($status==false){
+                        echo "<span class='badge'>Belum Aktif <i class='fa fa-times-circle'></i></span>";
+                    }else{
+                        echo "<span class='badge'>Aktif <i class='fa fa-check-circle'></i></span>";
+                    }
+                ?>
             </p>
         </div>
     </div>
@@ -60,7 +67,7 @@ $urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
                             echo $value->PeersID1==null?"<td>-</td>":"<td>".$value->peersID1->personal->FullName."</td>";
                             echo $value->PeersID2==null?"<td>-</td>":"<td>".$value->peersID2->personal->FullName."</td>";
                             echo $value->SuperiorID1==null?"<td>-</td>":"<td>".$value->superiorID1->personal->FullName."</td>";
-                            echo "<td>-</td>"; //superiorname2
+                            echo $value->SuperiorID2==null?"<td>-</td>":"<td>".$value->superiorID2->personal->FullName."</td>"; //superiorname2
                             echo $value->SubordinateID1==null?"<td>-</td>":"<td>".$value->subordinateID1->personal->FullName."</td>";
                             echo $value->SubordinateID2==null?"<td>-</td>":"<td>".$value->subordinateID2->personal->FullName."</td>";
                             echo "</tr>";

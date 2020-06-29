@@ -74,25 +74,29 @@ class PeriodeController extends Controller
         $pa = Performanceappraisal::find()
                         ->where(['PeriodeID'=>$id])
                         ->all();
+        $status = false;
+        if($pa!=null){
+            foreach ($pa as $key => $value) {
+                if($value->Status=='1'){
+                    $status = true;
+                    break;
+                }
+            }
+        }
         return $this->render('view', [
             'model' => $pa,
             'periode'=>$_periode,
+            'status'=>$status,
         ]);
     }
 
     public function actionKirim($id){
-        // $update = Yii::$app->db->createCommand("UPDATE performanceappraisal SET Status=:column1
-        //                                              WHERE PeriodeID=:id"
-        //                                              )
-        //                                     ->bindValue(':id', $ID)
-        //                                     ->bindValue(':column1', :1)
-        //                                     ->execute();
         $update = Performanceappraisal::updateAll(['Status' => '1'], ['=','PeriodeID', $id]);
         if($update){
             echo json_encode([
                 'status'=>1,
                 'message'=>"All data have been activated successfully.",
-                'url'=>Url::to(['index']),
+                'url'=>Url::to(['view','id'=>$id]),
             ]);
         }else{
             echo json_encode([
@@ -183,6 +187,138 @@ class PeriodeController extends Controller
     }
 
     public function actionGenerate($id){
+        $_generate = $this->generate($id);
+        return $this->render('generate',$_generate);
+    }
+    public function actionUpdateGenerate($id){
+        $_generate = $this->generate($id);
+        $_periode = $_generate['periode'];
+        $_listsuperior = [
+            0=>[
+                'id'=>0,
+                'name'=>'Pilih Atasan',
+            ],
+        ];
+        //getsuperior
+        $_superiors = Employment::find()
+                                ->where(['<','JoinDate',$_periode->Start])
+                                ->andWhere(['EmployeeSuperiorID'=>null])
+                                ->all();
+        if($_superiors!=null){
+            $i=1;
+            foreach ($_superiors as $key => $value) {
+                $_listsuperior[$i] =[
+                    'id'=>$value->EmployeeID,
+                    'name'=>$value->personal->FullName,
+                ];
+                $i++;
+            }
+        }
+        $_generate['superiors'] = $_listsuperior;
+        return $this->render('updategenerate',$_generate);
+    }
+
+    public function actionUpdateExisting($id){
+        $_periode = $this->findModel($id);
+        $_pas = Performanceappraisal::find()
+                                    ->where(['PeriodeID'=>$id])
+                                    ->all();
+        $_listsuperior = [
+            0=>[
+                'id'=>0,
+                'name'=>'Pilih Atasan',
+            ],
+        ];
+        //getsuperior
+        $_superiors = Employment::find()
+                                ->where(['<','JoinDate',$_periode->Start])
+                                ->andWhere(['EmployeeSuperiorID'=>null])
+                                ->all();
+        if($_superiors!=null){
+            $i=1;
+            foreach ($_superiors as $key => $value) {
+                $_listsuperior[$i] =[
+                    'id'=>$value->EmployeeID,
+                    'name'=>$value->personal->FullName,
+                ];
+                $i++;
+            }
+        }
+        $_arr = [];
+        if($_pas!=null){
+            $i=0;
+            foreach ($_pas as $key => $_value) {
+                $__peers = [
+                    0=>[
+                        'id'=>0,
+                        'name'=>'Pilih Peers'
+                    ],
+                ];
+                $__subordinate = [
+                    0=>[
+                        'id'=>0,
+                        'name'=>'Pilih Subordinate'
+                    ],
+                ];
+                $_squad = $this->getPeers($id,$_value->employee->SquadID, $_value->employee->JobPositionID, $_value->employee->OrganizationID, $_value->EmployeeID);
+                $_subordinate = $this->getSubordinate($id,$_value->EmployeeID);
+                if($_squad!=null){
+                    $j=1;
+                    foreach ($_squad as $key => $value) {
+                        $__peers[$j] = [
+                            'id'=>$value->EmployeeID,
+                            'name'=>$value->personal->FullName,
+                        ];
+                        $j++;
+                    }
+                }
+                if($_subordinate!=null){
+                    $j=1;
+                    foreach ($_squad as $key => $value) {
+                        $__subordinate[$j] = [
+                            'id'=>$value->EmployeeID,
+                            'name'=>$value->personal->FullName,
+                        ];
+                        $j++;
+                    }
+                }
+                $_superior1name = '-';
+                if($_value->employee->EmployeeSuperiorID!=null){
+                    if($_value->employee->employeeSuperior->personal!=null){
+                        $_superior1name = $_value->employee->employeeSuperior->personal->FullName;
+                    }
+                }
+                $_arr[$i] = [
+                    'paid'=>$_value->PerformanceAppraisalID,
+                    'employeeid'=>$_value->EmployeeID,
+                    'name'=>$_value->employee->personal->FullName,
+                    'squad'=>$_value->employee->squad==null?'-':$_value->employee->squad->SquadName,
+                    'jobposition'=>$_value->employee->jobPosition==null?'-':$_value->employee->jobPosition->JobPositionName,
+                    'aliasJob'=>$_value->employee->AKA_JobPosition,
+                    'peers'=>$__peers,
+                    'subordinate'=>$__subordinate,
+                    'superior1id'=>$_value->employee->EmployeeSuperiorID,
+                    'superior1name'=>$_superior1name,
+                    'vpeersid1'=>$_value->PeersID1,
+                    'vpeersid2'=>$_value->PeersID2,
+                    'vsuperiorid1'=>$_value->SuperiorID1,
+                    'vsuperiorid2'=>$_value->SuperiorID2,
+                    'vsubordinateid1'=>$_value->SubordinateID1,
+                    'vsubordinateid2'=>$_value->SubordinateID2,
+                ];
+                $i++;
+            } 
+        }
+
+        return $this->render('updateexisting',[
+            'employee'=>$_pas,
+            'periode'=>$_periode,
+            'arr'=>$_arr,
+            'superiors'=>$_listsuperior
+        ]);
+    }
+
+    private function generate($id){
         $_periode = $this->findModel($id);
         $_employee = Employment::find()
                                 ->where(['<', 'JoinDate', $_periode->Start])
@@ -235,12 +371,13 @@ class PeriodeController extends Controller
                $i++;
             } 
         }
-        return $this->render('generate',[
+        return [
             'employee'=>$_employee,
             'periode'=>$_periode,
             'arr'=>$_arr
-        ]);
+        ];
     }
+
     private function getPeers($idp,$sqid,$jpid, $orid, $except){
         $periode = $this->findModel($idp);
         $_squad = Employment::find()
@@ -278,16 +415,23 @@ class PeriodeController extends Controller
             $_peers1 = $_POST['peersid1id'];
             $_peers2 = $_POST['peersid2id'];
             $_superior1 = $_POST['superiorid1'];
+            $_superior2 = array_key_exists('superiorid2',$_POST)!==false?$_POST['superiorid2']:null;
             $_subordinate1 = $_POST['subordinate1id'];
             $_subordinate2 = $_POST['subordinate2id'];
             $_mode = $_POST['mode'];
+            $_paid = array_key_exists('paid',$_POST)!==false?$_POST['paid']:null;
             for ($i=0; $i < count($_employee) ; $i++) { 
                 $model = new Performanceappraisal();
+                if($_paid!=null){
+                    $model = Performanceappraisal::find()
+                                                ->where(['PerformanceAppraisalID'=>$_paid[$i]])
+                                                ->one();
+                }
                 $model->EmployeeID = $_employee[$i];
                 $model->PeersID1 = $_peers1[$i]==0?null:$_peers1[$i];
                 $model->PeersID2 = $_peers2[$i]==0?null:$_peers2[$i];
                 $model->SuperiorID1 = $_superior1[$i]==0?null:$_superior1[$i];
-                $model->SuperiorID2 = null;
+                $model->SuperiorID2 = $_superior2[$i]==0?null:$_superior2[$i];
                 $model->SubordinateID1 = $_subordinate1[$i]==0?null:$_subordinate1[$i];
                 $model->SubordinateID2 = $_subordinate2[$i]==0?null:$_subordinate2[$i];
                 $model->PeriodeID = $id;
@@ -301,7 +445,7 @@ class PeriodeController extends Controller
             echo json_encode([
                 'status'=>1,
                 'message'=>$message,
-                'url'=>Url::to(['index']),
+                'url'=>Url::to(['view','id'=>$id]),
             ]);
         }else{
             echo json_encode([

@@ -66,6 +66,7 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
         ]);
     ?>
     <?php
+        echo "<input type='hidden' name='mode' id='mode' value=0 />";
         $type = explode('-', $_GET['type']);
         if($type[0]=="self" || $type[0]=="superior"){
     ?>
@@ -401,8 +402,7 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
                 <div class="col-md-5"></div>
                 <div class="col-md-3">
                     <p>
-                        <?= Html::submitButton('Simpan',['class' => 'btn btn-primary','id'=>'simpan']) ?>
-                        <?= Html::submitButton('Kirim',['class' => 'btn btn-success','id'=>'kirim']) ?>
+                        <?= Html::submitButton('Simpan & Kirim',['class' => 'btn btn-success','id'=>'simpan']) ?>
                     </p>
                 </div>
             </div>
@@ -412,3 +412,4 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
     <?php ActiveForm::end(); ?>
 
 </div>
+

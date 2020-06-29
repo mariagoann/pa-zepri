@@ -88,6 +88,7 @@ class PaparameterController extends Controller
                 $superior = Performanceappraisal::find()
                                 ->joinWith('periode')
                                 ->where(['performanceappraisal.SuperiorID1'=>$personalinfo->employments->EmployeeID])
+                                ->orWhere(['performanceappraisal.SuperiorID2'=>$personalinfo->employments->EmployeeID])//or superior2
                                 ->andWhere(['periode.status'=>1])
                                 ->andWhere(['performanceappraisal.PeriodeID'=>$id])
                                 ->andWhere(['performanceappraisal.Status'=>'1'])
@@ -204,6 +205,7 @@ class PaparameterController extends Controller
             $model->TypePA = $type;
             $model->PerformanceAppraisalID = $id;
             $model->ReviewByID = $by;
+            $model->Status=1;
             $model->save(false);
             //doCalculation
             $calculate = $this->doCalculation($id);
@@ -260,6 +262,7 @@ class PaparameterController extends Controller
             $model->TypePA = $type;
             $model->PerformanceAppraisalID = $id;
             $model->ReviewByID = $by;
+            $model->Status = 1;
             $model->save(false);
             //doCalculation
             $calculate = $this->doCalculation($id);
@@ -280,6 +283,10 @@ class PaparameterController extends Controller
             'prfmaprsl'=>$prfmaprsl,
             'employee'=>$employee,
         ]);
+    }
+
+    public function actionSave(){
+
     }
 
     /**

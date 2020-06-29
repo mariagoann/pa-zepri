@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\PersonalinfoSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Generate Karyawan Penilai';
+$this->title = 'Ubah Karyawan Penilai';
 $this->params['breadcrumbs'][] = ['label' => 'Periode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $urlindex = Url::to(['index']);
@@ -22,11 +22,6 @@ $urlindex = Url::to(['index']);
         <div class='col-md-3'>
             <p>
                 <h4><?php echo Yii::$app->formatter->format($periode->Start, 'date')." - ".Yii::$app->formatter->format($periode->End, 'date' )?></h4>
-            </p>
-        </div>
-        <div class='col-md-6'>
-            <p>
-                <?= Html::a('Ubah Karyawan Penilai', ['update-generate','id'=>$_GET['id']], ['class' => 'btn btn-primary']) ?>
             </p>
         </div>
     </div>
@@ -60,11 +55,27 @@ $urlindex = Url::to(['index']);
                             echo "<td>".$value['squad']."</td>";
                             echo $value['aliasJob']==null?"<td>".$value['jobposition']."</td>":"<td>".$value['aliasJob']."</td>";
                             if($value['peers']!=null){
-                                echo "<input type='hidden' name='peersid1id[]' value='".$value['peers'][0]['id']."' />";
-                                echo "<td>".$value['peers'][0]['name']."</td>";
+                                echo "<td>";
+                                echo "<select class='form-control' name='peersid1id[]'>";
+                                foreach ($value['peers'] as $key => $_value) {
+                                   echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                }
+                                echo "</select>";
+                                echo "</td>";
                                 if(count($value['peers'])>1){
-                                    echo "<input type='hidden' name='peersid2id[]' value='".$value['peers'][1]['id']."' />";
-                                    echo "<td>".$value['peers'][1]['name']."</td>";
+                                    echo "<td>";
+                                    echo "<select class='form-control' name='peersid2id[]'>";
+                                    $i=0;
+                                    foreach ($value['peers'] as $key => $_value) {
+                                        if($i==1){
+                                            echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                        }else{
+                                            echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                        }
+                                       $i++;
+                                    }
+                                    echo "</select>";
+                                    echo "</td>";
                                 }else{
                                     echo "<td><input type='hidden' class='form-control' name='peersid2id[]' value=0 />-</td>";
                                 }
@@ -72,15 +83,55 @@ $urlindex = Url::to(['index']);
                                 echo "<td><input type='hidden' class='form-control' name='peersid1id[]' value=0 />-</td>";
                                 echo "<td><input type='hidden' class='form-control' name='peersid2id[]' value=0 />-</td>";
                             }
-                            echo "<input type='hidden' name='superiorid1[]' value='".$value['superior1id']."' />";
-                            echo "<td>".$value['superior1name']."</td>";
-                            echo "<td>-</td>"; //superiorname2
+
+                            if($superiors!=null){
+                                echo "<td>";
+                                echo "<select class='form-control' name='superiorid1[]'>";
+                                foreach ($superiors as $key => $_value) {
+                                    if($_value['id']==$value['superior1id']){
+                                        echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                    }else{
+                                        echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                    }
+                                }
+                                echo "</select>";
+                                echo "</td>";
+
+                                echo "<td>";
+                                echo "<select class='form-control' name='superiorid2[]'>";
+                                foreach ($superiors as $key => $_value) {
+                                   echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                }
+                                echo "</select>";
+                                echo "</td>";
+                            }else{
+                                echo "<td><input type='hidden' class='form-control' name='superiorid1[]' value=0 />-</td>";
+                                echo "<td><input type='hidden' class='form-control' name='superiorid2[]' value=0 />-</td>";
+                            }
+                        
                             if($value['subordinate']!=null){
-                                echo "<input type='hidden' name='subordinate1id[]' value='".$value['subordinate'][0]['id']."' />";
-                                echo "<td>".$value['subordinate'][0]['name']."</td>";
+                                echo "<td>";
+                                echo "<select class='form-control' name='subordinate1id[]'>";
+                                foreach ($value['subordinate'] as $key => $_value) {
+                                   echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                }
+                                echo "</select>";
+                                echo "</td>";
+
                                 if(count($value['subordinate'])>1){
-                                    echo "<input type='hidden' name='subordinate2id[]' value='".$value['subordinate'][1]['id']."' />";
-                                    echo "<td>".$value['subordinate'][1]['name']."</td>";
+                                    echo "<td>";
+                                    echo "<select class='form-control' name='subordinate2id[]'>";
+                                    $i=0;
+                                    foreach ($value['subordinate'] as $key => $_value) {
+                                        if($i==1){
+                                            echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                        }else{
+                                            echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                        }
+                                       $i++;
+                                    }
+                                    echo "</select>";
+                                    echo "</td>";
                                 }else{
                                     echo "<td><input type='hidden' class='form-control' name='subordinate2id[]' value=0 />-</td>";
                                 }
@@ -111,27 +162,8 @@ $urlindex = Url::to(['index']);
 
 <?php
 $script = <<< JS
-// $("#generate").submit(function(e) {
-//     e.preventDefault(); // avoid to execute the actual submit of the form.
-//     var form = $(this);
-//     var url = form.attr('action');
-//     var _data = form.serialize();
-//     $.ajax({
-//         type: form.attr('method'),
-//         url: url,
-//         data: _data, // serializes the form's elements.
-//         success: function(response)
-//         {
-//             var response = JSON.parse(response);
-//             alert(response.message);
-//             window.location.href = response.url;
-//         },
-//         error: function(){
-//             alert('Something went wrong');
-//         }
-//     });
-// });
 function execute(method, url,datas){
+    console.log(datas);
     $.ajax({
         type: method,
         url: url,

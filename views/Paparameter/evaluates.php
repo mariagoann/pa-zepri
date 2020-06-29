@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute'=>'Status',
+                'attribute'=>'Status Periode',
                 'format'=>'raw',
                 'value'=>function($data){
                     return $data->Status=="1"?"Active":"Non Active";

@@ -169,7 +169,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class='col-md-12'>
             <div class="alert alert-warning alert-dismissable">
                 <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                Anda belum di-assign untuk melakukan penilaian!
+                Periode belum aktif atau Anda belum di-assign untuk melakukan penilaian!
             </div>
         </div>
     </div>
