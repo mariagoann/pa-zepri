@@ -1,3 +1,4 @@
+
 <aside class="main-sidebar">
 
     <section class="sidebar">
@@ -18,7 +19,12 @@
             </div>
         </div>
 
-        <?= dmstr\widgets\Menu::widget(
+        <?php
+            $flag = false;
+            if(Yii::$app->session->has('role')){
+                $flag = Yii::$app->session->get('role')=='admin'?true:false;
+            }
+            echo dmstr\widgets\Menu::widget(
             [
                 'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => [
@@ -62,7 +68,7 @@
                                 'url' => ['/squad'],
                             ],
                         ],
-                        'visible' => !Yii::$app->user->isGuest
+                        'visible' => $flag,
                     ],
                     [
                         'label' => 'Performance Appraisal',
@@ -81,7 +87,7 @@
                         'label' => 'Karyawan Penilai',
                         'icon' => 'share',
                         'url' => ['/periode'],
-                        'visible' => !Yii::$app->user->isGuest
+                        'visible' => $flag,
                     ],
                     [
                         'label' => 'Penilaian Kinerja',

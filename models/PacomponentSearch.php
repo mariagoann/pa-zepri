@@ -1,11 +1,12 @@
 <?php
 
 namespace app\models;
-
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Pacomponent;
 use app\models\Employment;
+use app\models\Performanceappraisal;
 
 /**
  * PersonalinfoSearch represents the model behind the search form of `app\models\Personalinfo`.
@@ -45,10 +46,29 @@ class PacomponentSearch extends Model
         if(isset($_GET['id'])){
             $idpa = $_GET['id'];
         }
-
+        $eid = Yii::$app->session->get('employeeid');
+        $isSuperior = Yii::$app->session->get('isSuperior');
+        $role = Yii::$app->session->get('role');
         $query = Pacomponent::find()
                             ->innerJoin('employment', 'pacomponent.EmployeeID=employment.EmployeeID')
                             ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID');
+        if($isSuperior && $role!='admin'){
+            $modelpa = Performanceappraisal::find()
+                                        ->where(['SuperiorID1'=>$eid])
+                                        ->orWhere(['SuperiorID2'=>$eid])
+                                        ->andWhere(['Status'=>'1'])
+                                        ->all();
+            $ids = [];
+            if($modelpa!=null){
+                foreach ($modelpa as $key => $value) {
+                    array_push($ids,$value->PerformanceAppraisalID);
+                }
+            }
+            $query = Pacomponent::find()
+                                ->innerJoin('employment', 'pacomponent.EmployeeID=employment.EmployeeID')
+                                ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID')
+                                ->where(['in','pacomponent.PerformanceAppraisalID',$ids]);
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

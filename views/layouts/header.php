@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 
+
 /* @var $this \yii\web\View */
 /* @var $content string */
 ?>
@@ -248,6 +249,11 @@ use yii\helpers\Html;
                                 <?php 
                                     if(Yii::$app->session->has('fullname')){
                                         echo Yii::$app->session->get('fullname');
+                                    }
+                                    if(Yii::$app->session->has('role')){
+                                        $role = Yii::$app->session->get('role')=='admin'?'HRD':'Staff';
+                                        echo "<br>";
+                                        echo "<span>".$role."</span>";
                                     }
                                 ?>
                             </p>

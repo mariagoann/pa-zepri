@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\PersonalInfo;
+use app\models\User;
 
 class SiteController extends Controller
 {
@@ -81,8 +82,17 @@ class SiteController extends Controller
             $personalinfo = Personalinfo::find()
                                     ->where(['UserID'=>Yii::$app->user->id])
                                     ->one();
+            //get user
+            $id = Yii::$app->user->getId();
+            $user = User::find()
+                            ->where(['UserID'=>$id])
+                            ->one();
             if($personalinfo!=null){
+                $isSuperior = $personalinfo->employments->EmployeeSuperiorID==null?true:false;
+                Yii::$app->session->set('role',$user->role);
                 Yii::$app->session->set('fullname',$personalinfo->FullName);
+                Yii::$app->session->set('isSuperior',$isSuperior);
+                Yii::$app->session->set('employeeid',$personalinfo->employments->EmployeeID);
             }
             // return $this->goBack();
             return $this->redirect(['index']);
@@ -104,5 +114,9 @@ class SiteController extends Controller
         Yii::$app->user->logout();
         Yii::$app->session->destroy();
         return $this->goHome();
+    }
+
+    private function isSuperior($id){
+
     }
 }

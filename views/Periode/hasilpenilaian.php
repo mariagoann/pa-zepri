@@ -12,6 +12,12 @@ $this->title = 'Hasil Penilaian Kinerja Karyawan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="periode-index">
+<?php if (Yii::$app->session->hasFlash('notevaluate')): ?>
+    <div class="alert alert-warning alert-dismissable">
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+         <?= Yii::$app->session->getFlash('notevaluate') ?>
+    </div>
+<?php endif; ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -39,6 +45,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons'  => [
                     'view' => function ($url, $model) {
                         $url = Url::to(['view-nilai', 'id' => $model->PeriodeID]);
+                        if(Yii::$app->session->has('isSuperior')){
+                            $isSuperior = Yii::$app->session->get('isSuperior');
+                            $eid = Yii::$app->session->get('employeeid');
+                            if(!$isSuperior){
+                                $url = Url::to(['detail-nilai','id'=>null,'eid'=>$eid,'pid'=>$model->PeriodeID]);
+                            }
+                        }
                         return Html::a('<span class="fa fa-eye"></span>', $url, ['title' => 'Lihat Hasil Penilaian Kinerja Karyawan']);
                     },
                 ],

@@ -455,7 +455,10 @@ class PeriodeController extends Controller
         }
     }
 
-    public function actionDetailNilai($id){
+    /**
+     * {pacomponentid} {employeeid} {periodeid}
+     */
+    public function actionDetailNilai($id=null,$eid=null,$pid=null){
         $_selfScore = [];
         $_superior1score = [];
         $_superior2score = [];
@@ -463,9 +466,17 @@ class PeriodeController extends Controller
         $_valuesPeers2 = [];
         $_valuesSubordinate1=[];
         $_valuesSubordinate2=[];
+    
         $modelPAC = Pacomponent::find()
                                 ->where(['PAComponentID'=>$id])
                                 ->one();
+        if($id==null){
+            $modelPAC = Pacomponent::find()
+                                    ->where(['EmployeeID'=>$eid])
+                                    ->andWhere(['PeriodeID'=>$pid])
+                                    ->one();
+        }
+
         if($modelPAC!=null){
             $pa = Paparameter::find()
                             ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
@@ -499,17 +510,21 @@ class PeriodeController extends Controller
                     }
                 }
             }
+            return $this->render('detailnilai',[
+                'model'=>$modelPAC,
+                'self'=>$_selfScore,
+                'peers1'=>$_valuesPeers1,
+                'peers2'=>$_valuesPeers2,
+                'superior1'=>$_superior1score,
+                'superior2'=>$_superior2score,
+                'subordinate1'=>$_valuesSubordinate1,
+                'subordinate2'=>$_valuesSubordinate2,
+            ]);
+        }else{
+            Yii::$app->session->setFlash('notevaluate', "Anda Belum melakukan evaluasi atau belum dievaluasi!");
+            return $this->redirect(['hasil-penilaian']);
         }
-        return $this->render('detailnilai',[
-            'model'=>$modelPAC,
-            'self'=>$_selfScore,
-            'peers1'=>$_valuesPeers1,
-            'peers2'=>$_valuesPeers2,
-            'superior1'=>$_superior1score,
-            'superior2'=>$_superior2score,
-            'subordinate1'=>$_valuesSubordinate1,
-            'subordinate2'=>$_valuesSubordinate2,
-        ]);
+
     }
 
     /**

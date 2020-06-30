@@ -12,7 +12,9 @@ use yii\helpers\Url;
 $periodePenilaian = Yii::$app->formatter->format($model->periode->Start, 'date')." - ".
 Yii::$app->formatter->format($model->periode->End, 'date' );
 $this->title = 'Detail Hasil Penilaian Kinerja Karyawan';
-$this->params['breadcrumbs'][] = ['label' => 'Hasil Penilaian', 'url' => ['view-nilai','id'=>$model->PeriodeID]];
+if(Yii::$app->session->get('isSuperior') || Yii::$app->session->get('role')=='admin'){
+    $this->params['breadcrumbs'][] = ['label' => 'Hasil Penilaian', 'url' => ['view-nilai','id'=>$model->PeriodeID]];
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
@@ -61,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </tr>
                     <tr>
                         <td><b>Squad</tb></td>
-                        <td><?php echo $model->employee->squad->SquadName;?>
+                        <td><?php echo $model->employee->squad!=null?$model->employee->squad->SquadName:'-';?>
                         </td>
                     </tr>
                 </tbody>

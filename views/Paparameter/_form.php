@@ -46,7 +46,7 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
                     </tr>
                     <tr>
                         <td><b>Squad</tb></td>
-                        <td><?php echo $employee->squad->SquadName;?>
+                        <td><?php echo $employee->squad!=null?$employee->squad->SquadName:'-';?>
                         </td>
                     </tr>
                 </tbody>
