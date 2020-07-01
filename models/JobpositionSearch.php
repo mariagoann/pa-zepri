@@ -63,7 +63,7 @@ class JobpositionSearch extends Jobposition
 
         $query->andFilterWhere(['like', 'CodeJobPosition', $this->CodeJobPosition])
             ->andFilterWhere(['like', 'JobPositionName', $this->JobPositionName]);
-
+        $query->orderBy(['CodeJobPosition'=>SORT_ASC]);
         return $dataProvider;
     }
 }

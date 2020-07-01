@@ -83,7 +83,7 @@ use yii\helpers\Url;
                             [
                                 'changeMonth'=>'true',
                                 'changeYear'=>'true',
-                                'yearRange'=>"-25:date('Y')",
+                                'yearRange'=>"-100:2030",
                             ],
                         'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Tanggal Berlaku']
                     ])->label(false)
@@ -117,7 +117,7 @@ use yii\helpers\Url;
                             [
                                 'changeMonth'=>'true',
                                 'changeYear'=>'true',
-                                'yearRange'=>"-25:date('Y')",
+                                'yearRange'=>"-100:2030",
                             ],
                         'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Tanggal Lahir']
                     ])->label(false)
@@ -186,7 +186,7 @@ use yii\helpers\Url;
     <div class="form-group">
         <div class="col-md-3"></div>
         <div class="col-md-3">
-            <?= Html::submitButton($model->isNewRecord ? 'Simpan & Lanjut' : 'Edit',
+            <?= Html::submitButton($model->isNewRecord ? 'Simpan & Lanjut' : 'Simpan',
                  ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
                     'id'=>'submit'
                  ]

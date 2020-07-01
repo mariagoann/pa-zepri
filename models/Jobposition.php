@@ -8,9 +8,11 @@ use Yii;
  * This is the model class for table "jobposition".
  *
  * @property int $JobPositionID
- * @property string|null $CodeJobPosition
+ * @property string $CodeJobPosition
  * @property string $JobPositionName
  * @property int $Level
+ *
+ * @property Employment[] $employments
  */
 class Jobposition extends \yii\db\ActiveRecord
 {
@@ -28,10 +30,13 @@ class Jobposition extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['JobPositionName', 'Level'], 'required'],
+            [['CodeJobPosition', 'JobPositionName', 'Level'], 'required'],
             [['Level'], 'integer'],
             [['CodeJobPosition'], 'string', 'max' => 150],
             [['JobPositionName'], 'string', 'max' => 50],
+            [['CodeJobPosition'], 'unique'],
+            [['JobPositionName'], 'unique'],
+            [['Level'], 'unique'],
         ];
     }
 
@@ -42,9 +47,19 @@ class Jobposition extends \yii\db\ActiveRecord
     {
         return [
             'JobPositionID' => 'Job Position ID',
-            'CodeJobPosition' => 'Code Job Position',
+            'CodeJobPosition' => 'ID Job Position',
             'JobPositionName' => 'Job Position Name',
             'Level' => 'Level',
         ];
+    }
+
+    /**
+     * Gets query for [[Employments]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployments()
+    {
+        return $this->hasMany(Employment::className(), ['JobPositionID' => 'JobPositionID']);
     }
 }

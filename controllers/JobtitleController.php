@@ -102,6 +102,25 @@ class JobtitleController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+
+    public function actionExport(){
+        $model = Jobtitle::find()->all();
+        header("Content-Disposition: attachment; filename=\"DaftarJobTitle.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $model,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'JobTitleID',
+                'CodeJobTitle',
+                'JobTitleName',
+            ], 
+            'headers'=>[
+                'CodeJobTitle'=>'Code Job Title'
+            ],
+        ]);
+    }
+
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();

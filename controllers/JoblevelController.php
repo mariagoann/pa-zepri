@@ -102,6 +102,24 @@ class JoblevelController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionExport(){
+        $model = Joblevel::find()->all();
+        header("Content-Disposition: attachment; filename=\"DaftarJobLevel.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $model,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'LevelID',
+                'CodeLevel',
+                'LevelName',
+            ], 
+            'headers'=>[
+                'CodeLevel'=>'Code Level'
+            ],
+        ]);
+    }
+
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();

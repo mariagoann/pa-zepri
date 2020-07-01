@@ -63,7 +63,7 @@ class JobtitleSearch extends Jobtitle
 
         $query->andFilterWhere(['like', 'CodeJobTitle', $this->CodeJobTitle])
             ->andFilterWhere(['like', 'JobTitleName', $this->JobTitleName]);
-
+        $query->orderBy(['CodeJobTitle'=>SORT_ASC]);
         return $dataProvider;
     }
 }

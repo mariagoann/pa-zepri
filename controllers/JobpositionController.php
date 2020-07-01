@@ -95,6 +95,25 @@ class JobpositionController extends Controller
         ]);
     }
 
+    public function actionExport(){
+        $model = Jobposition::find()->all();
+        header("Content-Disposition: attachment; filename=\"DaftarJobPosition.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $model,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'JobPositionID',
+                'CodeJobPosition',
+                'JobPositionName',
+                'Level'
+            ], 
+            'headers'=>[
+                'CodeJobPosition'=>'Code Job Position'
+            ],
+        ]);
+    }
+
     /**
      * Deletes an existing Jobposition model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

@@ -63,7 +63,7 @@ class JoblevelSearch extends Joblevel
 
         $query->andFilterWhere(['like', 'CodeLevel', $this->CodeLevel])
             ->andFilterWhere(['like', 'LevelName', $this->LevelName]);
-
+        $query->orderBy(['CodeLevel'=>SORT_ASC]);
         return $dataProvider;
     }
 }

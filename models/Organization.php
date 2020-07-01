@@ -10,6 +10,8 @@ use Yii;
  * @property int $OrganizationID
  * @property string|null $CodeOrganization
  * @property string $OrganizationName
+ *
+ * @property Employment[] $employments
  */
 class Organization extends \yii\db\ActiveRecord
 {
@@ -30,6 +32,7 @@ class Organization extends \yii\db\ActiveRecord
             [['OrganizationName'], 'required'],
             [['CodeOrganization'], 'string', 'max' => 150],
             [['OrganizationName'], 'string', 'max' => 50],
+            [['CodeOrganization'], 'unique'],
         ];
     }
 
@@ -40,8 +43,18 @@ class Organization extends \yii\db\ActiveRecord
     {
         return [
             'OrganizationID' => 'Organization ID',
-            'CodeOrganization' => 'Code Organization',
+            'CodeOrganization' => 'ID Organization',
             'OrganizationName' => 'Organization Name',
         ];
+    }
+
+    /**
+     * Gets query for [[Employments]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployments()
+    {
+        return $this->hasMany(Employment::className(), ['OrganizationID' => 'OrganizationID']);
     }
 }

@@ -84,4 +84,13 @@ return array (
       '@yii/jui' => $vendorDir . '/yiisoft/yii2-jui',
     ),
   ),
+  'moonlandsoft/yii2-phpexcel' => 
+  array (
+    'name' => 'moonlandsoft/yii2-phpexcel',
+    'version' => '2.0.0.0',
+    'alias' => 
+    array (
+      '@moonland/phpexcel' => $vendorDir . '/moonlandsoft/yii2-phpexcel',
+    ),
+  ),
 );

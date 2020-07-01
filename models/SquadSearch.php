@@ -63,7 +63,7 @@ class SquadSearch extends Squad
 
         $query->andFilterWhere(['like', 'CodeSquad', $this->CodeSquad])
             ->andFilterWhere(['like', 'SquadName', $this->SquadName]);
-
+        $query->orderBy(['CodeSquad'=>SORT_ASC]);
         return $dataProvider;
     }
 }

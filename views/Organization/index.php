@@ -14,8 +14,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="organization-index">
 
     <p>
-        <?= Html::a('Daftar Organization', ['index'], ['class' => 'btn btn-default']) ?>
+        <span>Daftar Organization</span>
         <?= Html::a('Tambah Organization', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Export To Excel', ['export'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -25,11 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         // 'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute'=>'ID Organization',
-                'format'=>'raw',
-                'value'=>'CodeOrganization'
-            ],
+            'CodeOrganization',
             [
                 'attribute'=>'Nama Organization',
                 'format'=>'raw',

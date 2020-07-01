@@ -35,7 +35,7 @@ use yii\helpers\ArrayHelper;
         <div class='col-md-6'>
             <p>
                 <?= Html::a('Tambah Karyawan', ['create'], ['class' => 'btn btn-success']) ?>
-                <?= Html::a('Export ToExcel', ['index'], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Export To Excel', ['export'], ['class' => 'btn btn-primary']) ?>
             </p>
         </div>
     </div>

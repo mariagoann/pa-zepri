@@ -63,7 +63,7 @@ class OrganizationSearch extends Organization
 
         $query->andFilterWhere(['like', 'CodeOrganization', $this->CodeOrganization])
             ->andFilterWhere(['like', 'OrganizationName', $this->OrganizationName]);
-
+        $query->orderBy(['CodeOrganization'=>SORT_ASC]);
         return $dataProvider;
     }
 }

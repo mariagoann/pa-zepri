@@ -14,8 +14,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="jobtitle-index">
 
     <p>
-        <?= Html::a('Daftar Job Title', ['index'], ['class' => 'btn btn-default']) ?>
+        <span>Daftar Job Title</span>
         <?= Html::a('Tambah Job Title', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Export To Excel', ['export'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -25,11 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
         // 'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute'=>'ID Job Title',
-                'format'=>'raw',
-                'value'=>'CodeJobTitle'
-            ],
+            'CodeJobTitle',
             [
                 'attribute'=>'Job Title',
                 'format'=>'raw',

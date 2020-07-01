@@ -13,8 +13,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="squad-index">
     <p>
-        <?= Html::a('Daftar Squad', ['index'], ['class' => 'btn btn-default']) ?>
+        <span>Daftar Squad</span>
         <?= Html::a('Tambah Squad', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Export To Excel', ['export'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -24,11 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
         // 'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            [
-                'attribute'=>'ID Squad',
-                'format'=>'raw',
-                'value'=>'CodeSquad'
-            ],
+            'CodeSquad',
             [
                 'attribute'=>'Squad',
                 'format'=>'raw',

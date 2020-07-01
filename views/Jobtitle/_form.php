@@ -4,10 +4,12 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 // use yii\widgets\ActiveForm;
 use yii\bootstrap\ActiveForm;
-
+use yii\helpers\Url;
+use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Jobtitle */
 /* @var $form yii\widgets\ActiveForm */
+$urlindex = Url::to(['index']);
 ?>
 
 <div class="jobtitle-form">
@@ -40,10 +42,32 @@ use yii\bootstrap\ActiveForm;
 <div class="form-group">
     <div class="col-md-3"></div>
     <div class="col-md-3">
-        <?= Html::submitButton($model->isNewRecord ? 'Tambah' : 'Edit', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php
+            $button = Html::submitButton('Tambah', ['class' =>'btn btn-success' ]);
+            if(!$model->isNewRecord){
+                $button = Html::submitButton('Simpan', ['class' =>'btn btn-primary', 
+                    'data' => [
+                    'confirm' => 'Are you sure want to Update this item?'
+                    ] 
+                ]);
+            }
+            echo $button;
+        ?>
+        <!-- <?= Html::submitButton($model->isNewRecord ? 'Tambah' : 'Simpan', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?> -->
+        <button type="button" class="btn btn-danger" id='batal'>Cancel</button>
     </div>
 </div>
 
 <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+$script = <<< JS
+document.getElementById("batal").onclick = function(){
+    var url = "$urlindex";
+    window.location.href=url;
+};
+JS;
+$this->registerJs($script);
+?>

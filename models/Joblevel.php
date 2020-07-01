@@ -8,8 +8,10 @@ use Yii;
  * This is the model class for table "joblevel".
  *
  * @property int $LevelID
- * @property string|null $CodeLevel
- * @property string|null $LevelName
+ * @property string $CodeLevel
+ * @property string $LevelName
+ *
+ * @property Employment[] $employments
  */
 class Joblevel extends \yii\db\ActiveRecord
 {
@@ -27,8 +29,11 @@ class Joblevel extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['CodeLevel', 'LevelName'], 'required'],
             [['CodeLevel'], 'string', 'max' => 150],
             [['LevelName'], 'string', 'max' => 50],
+            [['CodeLevel'], 'unique'],
+            [['LevelName'], 'unique'],
         ];
     }
 
@@ -39,8 +44,18 @@ class Joblevel extends \yii\db\ActiveRecord
     {
         return [
             'LevelID' => 'Level ID',
-            'CodeLevel' => 'Code Level',
+            'CodeLevel' => 'ID Level',
             'LevelName' => 'Level Name',
         ];
+    }
+
+    /**
+     * Gets query for [[Employments]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployments()
+    {
+        return $this->hasMany(Employment::className(), ['LevelID' => 'LevelID']);
     }
 }

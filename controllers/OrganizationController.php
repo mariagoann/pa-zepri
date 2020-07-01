@@ -102,6 +102,24 @@ class OrganizationController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionExport(){
+        $model = Organization::find()->all();
+        header("Content-Disposition: attachment; filename=\"DaftarOrganisasi.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $model,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'OrganizationID',
+                'CodeOrganization',
+                'OrganizationName',
+            ], 
+            'headers'=>[
+                'CodeOrganization'=>'Code Organization'
+            ],
+        ]);
+    }
+
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();

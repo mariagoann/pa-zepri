@@ -8,8 +8,10 @@ use Yii;
  * This is the model class for table "squad".
  *
  * @property int $SquadID
- * @property string|null $CodeSquad
+ * @property string $CodeSquad
  * @property string $SquadName
+ *
+ * @property Employment[] $employments
  */
 class Squad extends \yii\db\ActiveRecord
 {
@@ -27,9 +29,11 @@ class Squad extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['SquadName'], 'required'],
+            [['CodeSquad', 'SquadName'], 'required'],
             [['CodeSquad'], 'string', 'max' => 150],
             [['SquadName'], 'string', 'max' => 50],
+            [['SquadName'], 'unique'],
+            [['CodeSquad'], 'unique'],
         ];
     }
 
@@ -40,8 +44,18 @@ class Squad extends \yii\db\ActiveRecord
     {
         return [
             'SquadID' => 'Squad ID',
-            'CodeSquad' => 'Code Squad',
+            'CodeSquad' => 'ID Squad',
             'SquadName' => 'Squad Name',
         ];
+    }
+
+    /**
+     * Gets query for [[Employments]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployments()
+    {
+        return $this->hasMany(Employment::className(), ['SquadID' => 'SquadID']);
     }
 }

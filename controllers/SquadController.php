@@ -82,6 +82,24 @@ class SquadController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionExport(){
+        $model = Squad::find()->all();
+        header("Content-Disposition: attachment; filename=\"DaftarSquad.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $model,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'SquadID',
+                'CodeSquad',
+                'SquadName',
+            ], 
+            'headers'=>[
+                'CodeSquad'=>'Code Squad'
+            ],
+        ]);
+    }
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);

@@ -277,6 +277,48 @@ class PersonalinfoController extends Controller
         }
     }
 
+    public function actionExport(){
+        $model = Personalinfo::find()->all();
+        header("Content-Disposition: attachment; filename=\"DaftarPegawai.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $model,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'PersonalID',
+                'FullName',
+                'identityType.Name',
+                'IdentityNumber',
+                'IdentityExpiryDate',
+                'PlaceOfBirth',
+                'DateOfBirth',
+                'status.Name',
+                'gender.Name',
+                'religion.Name',
+                'PhoneNumber',
+                'Address',
+                'Email',
+                'employments.EmployeeID',
+                'employments.EmployeeNumber',
+                'employments.JoinDate',
+                'employments.employeeStatus.Name',
+                'employments.organization.OrganizationName',
+                'employments.jobPosition.JobPositionName',
+                'employments.AKA_JobPosition',
+                'employments.jobTitle.JobTitleName',
+                'employments.level.LevelName',
+                'employments.squad.SquadName',
+                'employments.employeeSuperior.personal.FullName',
+            ], 
+            'headers' => ['identityType.Name' => 'Identity Type', 
+                        'status.Name'=>'Status',
+                        'gender.Name'=>'Gender',
+                        'religion.Name'=>'Religion',
+                        'employments.employeeStatus.Name'=>'Status Employment',
+                        'employments.employeeSuperior.personal.FullName'=>'Superior Name',
+            ], 
+        ]);
+    }
     /**
      * Deletes an existing Personalinfo model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

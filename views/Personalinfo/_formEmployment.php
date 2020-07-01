@@ -62,7 +62,7 @@ use yii\helpers\Url;
                     [
                         'changeMonth'=>'true',
                         'changeYear'=>'true',
-                        'yearRange'=>"-25:date('Y')",
+                        'yearRange'=>"-100:2030",
                     ],
                 'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Join Date']
             ])->label('Join Date')
@@ -145,7 +145,7 @@ use yii\helpers\Url;
     <div class="form-group">
         <div class="col-md-3"></div>
         <div class="col-md-3">
-            <?= Html::submitButton($modelEmployment->isNewRecord ? 'Tambah' : 'Edit',
+            <?= Html::submitButton($modelEmployment->isNewRecord ? 'Tambah' : 'Simpan',
                  ['class' => $modelEmployment->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
                     'id'=>'submitEmployment'
                  ]
