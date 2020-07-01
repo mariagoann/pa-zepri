@@ -77,28 +77,35 @@ CREATE TABLE IF NOT EXISTS `identitytype` (
 -- Dumping structure for table pa_db.joblevel
 CREATE TABLE IF NOT EXISTS `joblevel` (
   `LevelID` int(11) NOT NULL AUTO_INCREMENT,
-  `CodeLevel` varchar(150) DEFAULT NULL,
-  `LevelName` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`LevelID`)
+  `CodeLevel` varchar(150) NOT NULL,
+  `LevelName` varchar(50) NOT NULL,
+  PRIMARY KEY (`LevelID`),
+  UNIQUE KEY `CodeLevel` (`CodeLevel`),
+  UNIQUE KEY `LevelName` (`LevelName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table pa_db.jobposition
 CREATE TABLE IF NOT EXISTS `jobposition` (
   `JobPositionID` int(11) NOT NULL AUTO_INCREMENT,
-  `CodeJobPosition` varchar(150) DEFAULT NULL,
+  `CodeJobPosition` varchar(150) NOT NULL,
   `JobPositionName` varchar(50) NOT NULL,
   `Level` int(11) NOT NULL,
-  PRIMARY KEY (`JobPositionID`)
+  PRIMARY KEY (`JobPositionID`),
+  UNIQUE KEY `CodeJobPosition` (`CodeJobPosition`),
+  UNIQUE KEY `JobPositionName` (`JobPositionName`),
+  UNIQUE KEY `Level` (`Level`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table pa_db.jobtitle
 CREATE TABLE IF NOT EXISTS `jobtitle` (
   `JobTitleID` int(11) NOT NULL AUTO_INCREMENT,
-  `CodeJobTitle` varchar(150) DEFAULT NULL,
+  `CodeJobTitle` varchar(150) NOT NULL,
   `JobTitleName` varchar(50) NOT NULL,
-  PRIMARY KEY (`JobTitleID`)
+  PRIMARY KEY (`JobTitleID`),
+  UNIQUE KEY `CodeJobTitle` (`CodeJobTitle`),
+  UNIQUE KEY `JobTitleName` (`JobTitleName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -107,7 +114,8 @@ CREATE TABLE IF NOT EXISTS `organization` (
   `OrganizationID` int(11) NOT NULL AUTO_INCREMENT,
   `CodeOrganization` varchar(150) DEFAULT NULL,
   `OrganizationName` varchar(50) NOT NULL,
-  PRIMARY KEY (`OrganizationID`)
+  PRIMARY KEY (`OrganizationID`),
+  UNIQUE KEY `CodeOrganization` (`CodeOrganization`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -131,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `pacomponent` (
   CONSTRAINT `FK1_performanceappraisal` FOREIGN KEY (`PerformanceAppraisalID`) REFERENCES `performanceappraisal` (`PerformanceAppraisalID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK2_employementid` FOREIGN KEY (`EmployeeID`) REFERENCES `employment` (`EmployeeID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK3_periode` FOREIGN KEY (`PeriodeID`) REFERENCES `periode` (`PeriodeID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table pa_db.paparameter
@@ -167,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `paparameter` (
   KEY `FK2_review` (`ReviewByID`),
   CONSTRAINT `FK1_paparam_papraisal` FOREIGN KEY (`PerformanceAppraisalID`) REFERENCES `performanceappraisal` (`PerformanceAppraisalID`) ON DELETE CASCADE,
   CONSTRAINT `FK2_review` FOREIGN KEY (`ReviewByID`) REFERENCES `employment` (`EmployeeID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table pa_db.performanceappraisal
@@ -181,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `performanceappraisal` (
   `SubordinateID1` int(11) DEFAULT NULL,
   `SubordinateID2` int(11) DEFAULT NULL,
   `PeriodeID` int(11) DEFAULT NULL,
-  `Status` varchar(50) DEFAULT NULL,
+  `Status` varchar(1) DEFAULT '0',
   PRIMARY KEY (`PerformanceAppraisalID`),
   KEY `FK1_employee` (`EmployeeID`),
   KEY `FK2_peersid1` (`PeersID1`),
@@ -198,8 +206,8 @@ CREATE TABLE IF NOT EXISTS `performanceappraisal` (
   CONSTRAINT `FK5_superior2` FOREIGN KEY (`SuperiorID2`) REFERENCES `employment` (`EmployeeID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK6_subordinate1` FOREIGN KEY (`SubordinateID1`) REFERENCES `employment` (`EmployeeID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK7_subordinate2` FOREIGN KEY (`SubordinateID2`) REFERENCES `employment` (`EmployeeID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK8_periodeid` FOREIGN KEY (`PeriodeID`) REFERENCES `periode` (`PeriodeID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+  CONSTRAINT `FK8_periodeid` FOREIGN KEY (`PeriodeID`) REFERENCES `periode` (`PeriodeID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table pa_db.periode
@@ -210,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `periode` (
   `LastModified` datetime NOT NULL,
   `Status` varchar(1) DEFAULT '0',
   PRIMARY KEY (`PeriodeID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 -- Dumping structure for table pa_db.personalinfo
@@ -218,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `personalinfo` (
   `PersonalID` int(11) NOT NULL AUTO_INCREMENT,
   `FullName` varchar(150) NOT NULL,
   `IdentityType` int(11) NOT NULL,
-  `IdentityNumber` varchar(15) NOT NULL,
+  `IdentityNumber` varchar(20) NOT NULL,
   `IdentityExpiryDate` date NOT NULL,
   `PlaceOfBirth` varchar(50) NOT NULL,
   `DateOfBirth` date NOT NULL,
@@ -254,9 +262,11 @@ CREATE TABLE IF NOT EXISTS `religion` (
 -- Dumping structure for table pa_db.squad
 CREATE TABLE IF NOT EXISTS `squad` (
   `SquadID` int(11) NOT NULL AUTO_INCREMENT,
-  `CodeSquad` varchar(150) DEFAULT NULL,
+  `CodeSquad` varchar(150) NOT NULL,
   `SquadName` varchar(50) NOT NULL,
-  PRIMARY KEY (`SquadID`)
+  PRIMARY KEY (`SquadID`),
+  UNIQUE KEY `SquadName` (`SquadName`),
+  UNIQUE KEY `CodeSquad` (`CodeSquad`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
@@ -279,8 +289,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`UserID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
-INSERT INTO `user` (`UserID`, `username`, `password`, `role`, `auth_key`, `password_reset_token`) VALUES
-	(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'admin', '', '');
 -- Data exporting was unselected.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
