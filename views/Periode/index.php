@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="periode-index">
     <p>
-        <?= Html::a('Periode Penilaian', ['index'], ['class' => 'btn btn-default']) ?>
+        <span>Periode Penilaian</span>
         <?= Html::a('Tambah Periode', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 

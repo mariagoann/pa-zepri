@@ -10,6 +10,9 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Hasil Penilaian Kinerja Karyawan';
+if(Yii::$app->session->get('isSuperior') || Yii::$app->session->get('role')=='admin'){
+    $this->params['breadcrumbs'][] = ['label' => 'Hasil Penilaian', 'url' => ['hasil-penilaian']];
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="hasilpenilaian-view">
@@ -24,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class='col-md-6'>
             <p>
-                <?= Html::a('Export ToExcel', ['index'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('Export ToExcel', ['export','id'=>$periode->PeriodeID], ['class' => 'btn btn-success']) ?>
             </p>
         </div>
     </div>

@@ -15,6 +15,7 @@ use app\models\PacomponentSearch;
 use app\models\Pacomponent;
 use app\models\Paparameter;
 use yii\helpers\Url;
+use Mpdf\Mpdf;
 
 /**
  * PeriodeController implements the CRUD actions for Periode model.
@@ -459,6 +460,16 @@ class PeriodeController extends Controller
      * {pacomponentid} {employeeid} {periodeid}
      */
     public function actionDetailNilai($id=null,$eid=null,$pid=null){
+        $formed = $this->formeddetailnilai($id,$eid,$pid);
+        if($formed!=null){
+            return $this->render('detailnilai',$formed);
+        }else{
+            Yii::$app->session->setFlash('notevaluate', "Anda Belum melakukan evaluasi atau belum dievaluasi!");
+            return $this->redirect(['hasil-penilaian']);
+        }
+    }
+
+    private function formeddetailnilai($id=null,$eid=null,$pid=null){
         $_selfScore = [];
         $_superior1score = [];
         $_superior2score = [];
@@ -510,23 +521,154 @@ class PeriodeController extends Controller
                     }
                 }
             }
-            return $this->render('detailnilai',[
-                'model'=>$modelPAC,
-                'self'=>$_selfScore,
-                'peers1'=>$_valuesPeers1,
-                'peers2'=>$_valuesPeers2,
-                'superior1'=>$_superior1score,
-                'superior2'=>$_superior2score,
-                'subordinate1'=>$_valuesSubordinate1,
-                'subordinate2'=>$_valuesSubordinate2,
-            ]);
-        }else{
-            Yii::$app->session->setFlash('notevaluate', "Anda Belum melakukan evaluasi atau belum dievaluasi!");
-            return $this->redirect(['hasil-penilaian']);
         }
-
+        return [
+            'model'=>$modelPAC,
+            'self'=>$_selfScore,
+            'peers1'=>$_valuesPeers1,
+            'peers2'=>$_valuesPeers2,
+            'superior1'=>$_superior1score,
+            'superior2'=>$_superior2score,
+            'subordinate1'=>$_valuesSubordinate1,
+            'subordinate2'=>$_valuesSubordinate2,
+        ];
     }
 
+    /**
+     * {periodeid}
+     */
+    public function actionExport($id){
+        $role=Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
+        $isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):false;
+        $eid = Yii::$app->session->get('employeeid');
+        $query = Pacomponent::find()
+                            ->innerJoin('employment', 'pacomponent.EmployeeID=employment.EmployeeID')
+                            ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID')
+                            ->where(['pacomponent.PeriodeID'=>$id])
+                            ->all();
+        if($role=='user' && $isSuperior){
+            $modelpa = Performanceappraisal::find()
+                            ->where(['SuperiorID1'=>$eid])
+                            ->orWhere(['SuperiorID2'=>$eid])
+                            ->andWhere(['Status'=>'1'])
+                            ->all();
+            $ids = [];
+            if($modelpa!=null){
+                foreach ($modelpa as $key => $value) {
+                    array_push($ids,$value->PerformanceAppraisalID);
+                }
+            }
+            $query = Pacomponent::find()
+                                ->innerJoin('employment', 'pacomponent.EmployeeID=employment.EmployeeID')
+                                ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID')
+                                ->where(['in','pacomponent.PerformanceAppraisalID',$ids])
+                                ->andWhere(['pacomponent.PeriodeID'=>$id])
+                                ->all();
+        }
+        header("Content-Disposition: attachment; filename=\"DaftarPenilaianKinerja.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $query,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'periode.Start',
+                'periode.End',
+                'EmployeeID',
+                'employee.personal.FullName',
+                'EmployeeScore',
+                'Self',
+                'Peers',
+                'SubordinatesToSuperior',
+                'SuperiorToSubordinates',
+                'TotalScore',
+            ], 
+            'headers'=>[
+                'periode.Start'=>'Start Periode',
+                'periode.End'=>'End Periode',
+                'EmployeeScore'=>'Employee Score',
+                'Self'=>'Self Core Values',
+                'Peers'=>'Peers Core Values',
+                'SubordinatesToSuperior'=>'Subordinate Core Values',
+                'SuperiorToSubordinates'=>'Superior Core Values',
+                'TotalScore'=>'Total Score'
+            ],
+        ]);
+    }
+
+    /**
+     * {periodeid}
+     */
+    public function actionExportPenilai($id){
+        $pa = Performanceappraisal::find()
+                        ->where(['PeriodeID'=>$id])
+                        ->all();
+        header("Content-Disposition: attachment; filename=\"DaftarKaryawanPenilai.xlsx\"");
+        \moonland\phpexcel\Excel::widget([
+            'models' => $pa,
+            'mode' => 'export', 
+            'setFirstTitle'=>true,
+            'columns' => [
+                'periode.Start',
+                'periode.End',
+                'EmployeeID',
+                'employee.personal.FullName',
+                'peersID1.personal.FullName',
+                'peersID2.personal.FullName',
+                'superiorID1.personal.FullName',
+                'superiorID2.personal.FullName',
+                'subordinateID1.personal.FullName',
+                'subordinateID1.personal.FullName',
+                'Status'
+            ], 
+            'headers'=>[
+                'periode.Start'=>'Start Periode',
+                'periode.End'=>'End Periode',
+                'peersID1.personal.FullName'=>'Peers1',
+                'eersID2.personal.FullName'=>'Peers2',
+                'superiorID1.personal.FullName'=>'SuperiorID1',
+                'superiorID2.personal.FullName'=>'SuperiorID2',
+                'subordinateID1.personal.FullName'=>'SubordinateID1',
+                'subordinateID1.personal.FullName'=>'SubordinateID1',
+            ],
+        ]);
+    }
+
+    public function actionSavetrack($id){
+        if($_POST){
+            $model = PAComponent::find()
+                                ->where(['PAComponentID'=>$id])
+                                ->one();
+            $model->TrackRecord = $_POST['track'];
+            $model->save(false);
+
+            echo json_encode([
+                'status'=>1,
+                'message'=>"Track Record has been updated.",
+                'url'=>Url::to(['detail-nilai','id'=>$id]),
+            ]);
+        }else{
+            echo json_encode([
+                'status'=>0,
+                'message'=>'Something went wrong'
+            ]);
+        }
+    }
+    /**
+     * {pacomponentid} {employeeid} {periodeid}
+     */
+    public function actionGenpdf($id=null,$eid=null,$pid=null){
+        $formed = $this->formeddetailnilai($id,$eid,$pid);
+        $mpdf = new mPDF();
+        // return $this->renderPartial('formatdetailnilai',$formed);
+        $mpdf->WriteHTML($this->renderPartial('formatdetailnilai',$formed));
+        $mpdf->Output('DetailNilai.pdf', 'D');
+    }
+
+    public function beforeAction($action) 
+    { 
+        $this->enableCsrfValidation = false; 
+        return parent::beforeAction($action); 
+    }
     /**
      * Finds the Periode model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -534,12 +676,6 @@ class PeriodeController extends Controller
      * @return Periode the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-
-    public function beforeAction($action) 
-    { 
-        $this->enableCsrfValidation = false; 
-        return parent::beforeAction($action); 
-    }
     protected function findModel($id)
     {
         if (($model = Periode::findOne($id)) !== null) {

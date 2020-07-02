@@ -11,10 +11,16 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 $periodePenilaian = Yii::$app->formatter->format($model->periode->Start, 'date')." - ".
 Yii::$app->formatter->format($model->periode->End, 'date' );
-$this->title = 'Detail Hasil Penilaian Kinerja Karyawan';
-if(Yii::$app->session->get('isSuperior') || Yii::$app->session->get('role')=='admin'){
+$urlsave = Url::to(['savetrack','id'=>$_GET['id']]);
+//role 
+$role = Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
+$isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):null;
+if($isSuperior || $role=='admin'){
     $this->params['breadcrumbs'][] = ['label' => 'Hasil Penilaian', 'url' => ['view-nilai','id'=>$model->PeriodeID]];
+}else{
+    $this->params['breadcrumbs'][] = ['label' => 'Hasil Penilaian', 'url' => ['hasil-penilaian']];
 }
+$this->title = 'Detail Hasil Penilaian Kinerja Karyawan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
@@ -127,12 +133,54 @@ $this->params['breadcrumbs'][] = $this->title;
                         echo "</tr>";
 
                         echo "<tr rowspan=4>";
-                        echo "<td colspan=8>".$model->TrackRecord."</td>";
+                        if($role=='admin' && $model->TrackRecord==null){
+                            echo "<td colspan=8> 
+                                    <input type='text' class='form-control' id='track' name='track'> 
+                                </td>";
+                        }else{
+                            echo "<td colspan=8>".$model->TrackRecord."</td>";
+                        }
                         echo "<td colspan=2><b>".number_format($model->TotalScore,2)."</b></td>";
                         echo "</tr>";
                     ?>
                 </tbody>
             </table>
+            <p>
+                <?php
+                    $button = Html::a('Generate To PDF', ['genpdf','id'=>$model->PAComponentID], ['class' => 'btn btn-primary']);
+                    $eid = Yii::$app->session->get('employeeid');
+                    if(!$isSuperior){
+                        $button = Html::a('Generate To PDF', ['genpdf','id'=>null,'eid'=>$eid,'pid'=>$model->PeriodeID], ['class' => 'btn btn-primary']);
+                    }
+                    echo $button;
+                ?>
+            </p>
         </div>
     </div>
 </div>
+
+<?php
+$script = <<< JS
+$("#track").keyup(function(event) {
+    if (event.keyCode === 13) {
+        var url = '$urlsave';
+        var data = {track:this.value};
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: data, 
+            success: function(response)
+            {
+                var response = JSON.parse(response);
+                alert(response.message);
+                window.location.href = response.url;
+            },
+            error: function(){
+                alert('Something went wrong');
+            }
+        });
+    }
+});
+JS;
+$this->registerJs($script);
+?>

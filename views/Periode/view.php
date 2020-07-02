@@ -26,7 +26,7 @@ $urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
         </div>
         <div class='col-md-6'>
             <p>
-                <?= Html::a('Export ToExcel', ['index'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a('Export ToExcel', ['export-penilai','id'=>$periode->PeriodeID], ['class' => 'btn btn-success']) ?>
                 <?= Html::a('Ubah Karyawan Penilai', ['update-existing', 'id'=>$_GET['id']], ['class' => 'btn btn-primary']) ?>
                 <?php
                     if($status==false){

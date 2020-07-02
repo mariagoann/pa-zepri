@@ -5,10 +5,9 @@ use yii\helpers\ArrayHelper;
 // use yii\widgets\ActiveForm;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
-
-/* @var $this yii\web\View */
-/* @var $model app\models\Periode */
-/* @var $form yii\widgets\ActiveForm */
+use yii\helpers\Url;
+use yii\widgets\Pjax;
+$urlindex = Url::to(['index']);
 ?>
 
 <div class="periode-form">
@@ -40,7 +39,7 @@ use yii\jui\DatePicker;
                         [
                             'changeMonth'=>'true',
                             'changeYear'=>'true',
-                            'yearRange'=>"-25:date('Y')",
+                            'yearRange'=>"-20:2030",
                         ],
                     'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control']
     ])->label('Tanggal Awal Periode') ?>
@@ -57,7 +56,7 @@ use yii\jui\DatePicker;
                         [
                             'changeMonth'=>'true',
                             'changeYear'=>'true',
-                            'yearRange'=>"-25:date('Y')",
+                            'yearRange'=>"-20:2030",
                         ],
                     'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control']
     ])->label('Tanggal Akhir Periode') ?>
@@ -74,7 +73,7 @@ use yii\jui\DatePicker;
                         [
                             'changeMonth'=>'true',
                             'changeYear'=>'true',
-                            'yearRange'=>"-25:date('Y')",
+                            'yearRange'=>"-20:2030",
                         ],
                     'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control']
     ])->label('Tanggal Akhir Penilaian') ?>
@@ -83,10 +82,32 @@ use yii\jui\DatePicker;
     <div class="form-group">
         <div class="col-md-3"></div>
         <div class="col-md-3">
-            <?= Html::submitButton($model->isNewRecord ? 'Tambah' : 'Edit', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-        </div>
+        <?php
+            $button = Html::submitButton('Tambah', ['class' =>'btn btn-success' ]);
+            if(!$model->isNewRecord){
+                $button = Html::submitButton('Simpan', ['class' =>'btn btn-primary', 
+                    'data' => [
+                    'confirm' => 'Are you sure want to Update this item?'
+                    ] 
+                ]);
+            }
+            echo $button;
+        ?>
+        <!-- <?= Html::submitButton($model->isNewRecord ? 'Tambah' : 'Simpan', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?> -->
+        <button type="button" class="btn btn-danger" id='batal'>Cancel</button>
+    </div>
     </div>
 
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+$script = <<< JS
+document.getElementById("batal").onclick = function(){
+    var url = "$urlindex";
+    window.location.href=url;
+};
+JS;
+$this->registerJs($script);
+?>
