@@ -87,15 +87,19 @@ class SiteController extends Controller
             $user = User::find()
                             ->where(['UserID'=>$id])
                             ->one();
+            Yii::$app->session->set('role',$user->role);
             if($personalinfo!=null){
                 $isSuperior = $personalinfo->employments->EmployeeSuperiorID==null?true:false;
-                Yii::$app->session->set('role',$user->role);
                 Yii::$app->session->set('fullname',$personalinfo->FullName);
                 Yii::$app->session->set('isSuperior',$isSuperior);
                 Yii::$app->session->set('employeeid',$personalinfo->employments->EmployeeID);
             }
+            if($user->role=='admin'){
+                return $this->redirect(['personalinfo/index']);
+            }else{
+                return $this->redirect(['periode/hasil-penilaian']);
+            }
             // return $this->goBack();
-            return $this->redirect(['index']);
         }
 
         $model->password = '';
