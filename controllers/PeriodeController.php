@@ -204,7 +204,7 @@ class PeriodeController extends Controller
         //getsuperior
         $_superiors = Employment::find()
                                 ->where(['<','JoinDate',$_periode->Start])
-                                ->andWhere(['EmployeeSuperiorID'=>null])
+                                // ->andWhere(['EmployeeSuperiorID'=>null])
                                 ->all();
         if($_superiors!=null){
             $i=1;
@@ -234,7 +234,7 @@ class PeriodeController extends Controller
         //getsuperior
         $_superiors = Employment::find()
                                 ->where(['<','JoinDate',$_periode->Start])
-                                ->andWhere(['EmployeeSuperiorID'=>null])
+                                // ->andWhere(['EmployeeSuperiorID'=>null])
                                 ->all();
         if($_superiors!=null){
             $i=1;
