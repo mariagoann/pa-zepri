@@ -119,7 +119,7 @@ class PersonalinfoController extends Controller
         $modelEmployment = new Employment();
         $statusEmployment = Employeestatus::find()->all();
         $atasan = Employment::find()
-                        ->where(['EmployeeSuperiorID'=>null])
+                        // ->where(['EmployeeSuperiorID'=>null])
                         ->all();
         $organization = Organization::find()->all();
         $jobposition = Jobposition::find()->all();

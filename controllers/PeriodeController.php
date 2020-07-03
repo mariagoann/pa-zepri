@@ -94,12 +94,12 @@ class PeriodeController extends Controller
 
     public function actionKirim($id){
         $update = Performanceappraisal::updateAll(['Status' => '1'], ['=','PeriodeID', $id]);
-        $allpa = Performanceappraisal::find()->where(['PeriodeID'=>$id])->all();
-        if($allpa!=null){
-            foreach ($allpa as $key=>$value) {
-                $this->notif($value);
-            }
-        }
+        // $allpa = Performanceappraisal::find()->where(['PeriodeID'=>$id])->all();
+        // if($allpa!=null){
+        //     foreach ($allpa as $key=>$value) {
+        //         $this->notif($value);
+        //     }
+        // }
         if($update){
             echo json_encode([
                 'status'=>1,
@@ -446,10 +446,10 @@ class PeriodeController extends Controller
                 $model->Status = $_mode;
                 $model->save(false);
 
-                //send notif
-                if($_mode==1){
-                    $this->notif($model);
-                }
+                // //send notif
+                // if($_mode==1){
+                //     $this->notif($model);
+                // }
             }
             $message = 'Data Has been saved.';
             if($_mode==1){

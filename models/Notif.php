@@ -13,7 +13,7 @@ use Yii;
  * @property int $Read
  * @property int|null $To
  *
- * @property User $to
+ * @property Employment $to
  */
 class Notif extends \yii\db\ActiveRecord
 {
@@ -31,12 +31,11 @@ class Notif extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['NotifID', 'Message', 'Created_at'], 'required'],
-            [['NotifID', 'Read', 'To'], 'integer'],
+            [['Message', 'Created_at'], 'required'],
             [['Created_at'], 'safe'],
+            [['Read', 'To'], 'integer'],
             [['Message'], 'string', 'max' => 255],
-            [['NotifID'], 'unique'],
-            [['To'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['To' => 'UserID']],
+            [['To'], 'exist', 'skipOnError' => true, 'targetClass' => Employment::className(), 'targetAttribute' => ['To' => 'EmployeeID']],
         ];
     }
 
@@ -61,6 +60,6 @@ class Notif extends \yii\db\ActiveRecord
      */
     public function getTo()
     {
-        return $this->hasOne(User::className(), ['UserID' => 'To']);
+        return $this->hasOne(Employment::className(), ['EmployeeID' => 'To']);
     }
 }
