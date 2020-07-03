@@ -94,6 +94,12 @@ class PeriodeController extends Controller
 
     public function actionKirim($id){
         $update = Performanceappraisal::updateAll(['Status' => '1'], ['=','PeriodeID', $id]);
+        $allpa = Performanceappraisal::find()->where(['PeriodeID'=>$id])->all();
+        if($allpa!=null){
+            foreach ($allpa as $key=>$value) {
+                $this->notif($value);
+            }
+        }
         if($update){
             echo json_encode([
                 'status'=>1,
@@ -440,10 +446,10 @@ class PeriodeController extends Controller
                 $model->Status = $_mode;
                 $model->save(false);
 
-                // //send notif
-                // if($_mode==1){
-                //     $this->notif($model,null);
-                // }
+                //send notif
+                if($_mode==1){
+                    $this->notif($model);
+                }
             }
             $message = 'Data Has been saved.';
             if($_mode==1){
@@ -672,12 +678,68 @@ class PeriodeController extends Controller
 
     /**
      * create notif
-     * {padata} {idperiode}
+     * {padata} 
      */
-    private function notif($pa=null,$id=null){
+    private function notif($pa){
         if($pa!=null){
-        }else if($pa!=null){
-            //select all from performanceappraisal
+            $_arr=[
+                'self'=>$pa->EmployeeID,
+                'peersid1'=>$pa->PeersID1,
+                'peersid2'=>$pa->PeersID2,
+                'superiorid1'=>$pa->SuperiorID1,
+                'superiorid2'=>$pa->SuperiorID2,
+                'subordinateid1'=>$pa->SubordinateID1,
+                'subordinateid2'=>$pa->SubordinateID2,
+            ];
+            if($_arr['self']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Self Performance Appraisal';
+                $model->To = $_arr['self'];
+                $model->save(false);
+            }
+            if($_arr['peersid1']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Peers1 Performance Appraisal kepada '.$pa->peersID1->personal->FullName;
+                $model->To = $_arr['peersid1'];
+                $model->save(false);
+            }
+            if($_arr['peersid2']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Peers2 Performance Appraisal kepada '.$pa->peersID2->personal->FullName;
+                $model->To = $_arr['peersid2'];
+                $model->save(false);
+            }
+            if($_arr['superiorid1']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Superior1 Performance Appraisal kepada '.$pa->superiorID1->personal->FullName;
+                $model->To = $_arr['superiorid1'];
+                $model->save(false);
+            }
+            if($_arr['superiorid2']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Superior2 Performance Appraisal kepada '.$pa->superiorID2->personal->FullName;
+                $model->To = $_arr['superiorid2'];
+                $model->save(false);
+            }
+            if($_arr['subordinateid1']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Subordinate1 Performance Appraisal kepada '.$pa->subordinateID1->personal->FullName;
+                $model->To = $_arr['subordinateid1'];
+                $model->save(false);
+            }
+            if($_arr['subordinateid2']!=null){
+                $model = new Notif();
+                $model->Created_at = date('Y-m-d H:i:s');
+                $model->Message = 'Silahkan melakukan penilaian Subordinate2 Performance Appraisal kepada '.$pa->subordinateID2->personal->FullName;
+                $model->To = $_arr['subordinateid2'];
+                $model->save(false);
+            }
         }
     }
     public function beforeAction($action) 
