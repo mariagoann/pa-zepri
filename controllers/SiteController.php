@@ -89,10 +89,15 @@ class SiteController extends Controller
                             ->one();
             Yii::$app->session->set('role',$user->role);
             if($personalinfo!=null){
-                $isSuperior = $personalinfo->employments->EmployeeSuperiorID==null?true:false;
+                $isSuperior=false;
+                $employeeid = null;
+                if($personalinfo->employments!=null){
+                    $isSuperior = $personalinfo->employments->EmployeeSuperiorID==null?true:false;
+                    $employeeid = $personalinfo->employments->EmployeeID;
+                }
                 Yii::$app->session->set('fullname',$personalinfo->FullName);
                 Yii::$app->session->set('isSuperior',$isSuperior);
-                Yii::$app->session->set('employeeid',$personalinfo->employments->EmployeeID);
+                Yii::$app->session->set('employeeid',$employeeid);
             }
             if($user->role=='admin'){
                 return $this->redirect(['personalinfo/index']);

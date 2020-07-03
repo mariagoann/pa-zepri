@@ -16,6 +16,7 @@ use app\models\Pacomponent;
 use app\models\Paparameter;
 use yii\helpers\Url;
 use Mpdf\Mpdf;
+use app\models\Notif;
 
 /**
  * PeriodeController implements the CRUD actions for Periode model.
@@ -438,6 +439,11 @@ class PeriodeController extends Controller
                 $model->PeriodeID = $id;
                 $model->Status = $_mode;
                 $model->save(false);
+
+                // //send notif
+                // if($_mode==1){
+                //     $this->notif($model,null);
+                // }
             }
             $message = 'Data Has been saved.';
             if($_mode==1){
@@ -664,6 +670,16 @@ class PeriodeController extends Controller
         $mpdf->Output('DetailNilai.pdf', 'D');
     }
 
+    /**
+     * create notif
+     * {padata} {idperiode}
+     */
+    private function notif($pa=null,$id=null){
+        if($pa!=null){
+        }else if($pa!=null){
+            //select all from performanceappraisal
+        }
+    }
     public function beforeAction($action) 
     { 
         $this->enableCsrfValidation = false; 

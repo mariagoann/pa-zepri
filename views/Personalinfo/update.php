@@ -31,6 +31,7 @@ $this->params['breadcrumbs'][] = 'Update';
             [
                 'label' => 'Data Karyawan',
                 'content' => $this->render('_formEmployment', [
+                        'model'=>$model,
                         'modelEmployment' => $modelEmployment,
                         'statusEmployment'=>$statusEmployment,
                         'organization'=>$organization,

@@ -7,18 +7,18 @@ use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
-
+$urlindex = Url::to(['index']);
 /* @var $this yii\web\View */
 /* @var $modelEmployment app\modelEmployments\Employment */
 /* @var $form yii\widgets\ActiveForm */
-?>
 
+?>
 <div class="employment-form">
 
 
     <?php 
         $_url = Url::to(['saveemployee']);
-        if(!$modelEmployment->isNewRecord){
+        if(!$model->isNewRecord){
             $_url.="&id=".$_GET['id'];
         }
         $form = ActiveForm::begin([
@@ -150,6 +150,7 @@ use yii\helpers\Url;
                     'id'=>'submitEmployment'
                  ]
             ) ?>
+            <button type="button" class="btn btn-danger" id='batal2'>Cancel</button>
         </div>
     </div>
 
@@ -179,7 +180,10 @@ jQuery(document).ready(function($) {
         e.preventDefault();
     });
 });
-
+document.getElementById("batal2").onclick = function(){
+    var url = "$urlindex";
+    window.location.href=url;
+};
 JS;
 $this->registerJs($script);
 ?>

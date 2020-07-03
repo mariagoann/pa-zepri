@@ -11,6 +11,7 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 $periodePenilaian = Yii::$app->formatter->format($prfmaprsl->periode->Start, 'date')." - ".
 Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
+$urlindex = Url::to(['evaluates']);
 ?>
 
 <div class="paparameter-form">
@@ -403,6 +404,7 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
                 <div class="col-md-3">
                     <p>
                         <?= Html::submitButton('Simpan & Kirim',['class' => 'btn btn-success','id'=>'simpan']) ?>
+                        <button type="button" class="btn btn-danger" id='batal'>Cancel</button>
                     </p>
                 </div>
             </div>
@@ -413,3 +415,12 @@ Yii::$app->formatter->format($prfmaprsl->periode->End, 'date' );
 
 </div>
 
+<?php
+$script = <<< JS
+document.getElementById("batal").onclick = function(){
+    var url = "$urlindex";
+    window.location.href=url;
+};
+JS;
+$this->registerJs($script);
+?>

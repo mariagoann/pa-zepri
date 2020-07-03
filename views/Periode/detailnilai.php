@@ -11,7 +11,6 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 $periodePenilaian = Yii::$app->formatter->format($model->periode->Start, 'date')." - ".
 Yii::$app->formatter->format($model->periode->End, 'date' );
-$urlsave = Url::to(['savetrack','id'=>$_GET['id']]);
 //role 
 $role = Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
 $isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):null;
@@ -20,6 +19,8 @@ if($isSuperior || $role=='admin'){
 }else{
     $this->params['breadcrumbs'][] = ['label' => 'Hasil Penilaian', 'url' => ['hasil-penilaian']];
 }
+
+$urlsave = $role=='admin'?Url::to(['savetrack','id'=>$_GET['id']]):null;
 $this->title = 'Detail Hasil Penilaian Kinerja Karyawan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>

@@ -47,6 +47,9 @@ class PersonalinfoController extends Controller
      */
     public function actionIndex($field=null)
     {
+        if(Yii::$app->session->has('personalid')){
+            Yii::$app->session->remove('personalid');
+        }
         $searchModel = new PersonalinfoSearch();
         $searchModel->field = $field;
 
@@ -77,7 +80,7 @@ class PersonalinfoController extends Controller
         $_level = '-';
         $_squad ='-';
         $_atasan = '-';
-        if($model->PersonalID!=null){
+        if($model->PersonalID!=null && $model->employments!=null){
             $_organization = $model->employments->organization==null?'-':$model->employments->organization->OrganizationName;
             $_jobPosition = $model->employments->jobPosition==null?'-':$model->employments->jobPosition->JobPositionName;
             $_jobTitle = $model->employments->jobTitle==null?'-':$model->employments->jobTitle->JobTitleName;
@@ -162,6 +165,9 @@ class PersonalinfoController extends Controller
         $modelEmployment = Employment::find()
                                 ->where(['PersonalID'=>$id])
                                 ->one();
+        if($modelEmployment==null){
+            $modelEmployment= new Employment();
+        }
         $statusEmployment = Employeestatus::find()->all();
         $atasan = Employment::find()
                         ->where(['EmployeeSuperiorID'=>null])
@@ -240,7 +246,7 @@ class PersonalinfoController extends Controller
         if(Yii::$app->session->has('personalid')){
             $_personalid = Yii::$app->session->get('personalid');
         }else{
-            $_personalid = $_GET['id'];
+            $_personalid =$_GET['id'];
         }
         if($_post['mode']==1){
             $model = Employment::find()

@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
+$urlindex = Url::to(['index']);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Personalinfo */
@@ -191,6 +192,7 @@ use yii\helpers\Url;
                     'id'=>'submit'
                  ]
             ) ?>
+            <button type="button" class="btn btn-danger" id='batal'>Cancel</button>
         </div>
     </div>
 
@@ -222,7 +224,10 @@ jQuery(document).ready(function($) {
         e.preventDefault();
     });
 });
-
+document.getElementById("batal").onclick = function(){
+    var url = "$urlindex";
+    window.location.href=url;
+};
 JS;
 $this->registerJs($script);
 ?>

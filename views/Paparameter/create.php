@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model app\models\Paparameter */
 
 $this->title = $judul;
-$this->params['breadcrumbs'][] = ['label' => 'Daftar PA', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Daftar PA', 'url' => ['evaluates']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="paparameter-create">
