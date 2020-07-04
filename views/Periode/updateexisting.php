@@ -53,6 +53,20 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                         echo "<input type='hidden' name='mode' id='mode' value=0 />";
                         $a=1;
                         foreach ($arr as $key => $value) {
+                            $peers = [
+                                0=>[
+                                    'id'=>0,
+                                    'name'=>'Pilih Peers',
+                                ]
+                            ];
+                            $subordinate = [
+                                0=>[
+                                    'id'=>0,
+                                    'name'=>'Pilih Subordinate',
+                                ]
+                            ];
+                            $peers = $listAll!=null?array_merge($peers,$listAll):null;
+                            $subordinate = $listAll!=null?array_merge($subordinate,$listAll):null;
                             echo "<tr>";
                             echo "<td>$a</td>";
                             echo "<input type='hidden' name='paid[]' value='".$value['paid']."' />";
@@ -60,10 +74,10 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                             echo "<td>".$value['name']."</td>";
                             echo "<td>".$value['squad']."</td>";
                             echo $value['aliasJob']==null?"<td>".$value['jobposition']."</td>":"<td>".$value['aliasJob']."</td>";
-                            if($value['peers']!=null && count($value['peers'])>1){
+                            if($peers!=null){
                                 echo "<td>";
                                 echo "<select class='form-control' name='peersid1id[]'>";
-                                foreach ($value['peers'] as $key => $_value) {
+                                foreach ($peers as $key => $_value) {
                                    if($value['vpeersid1']!=null && $value['vpeersid1'] == $_value['id']){
                                      echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
                                    }else{
@@ -72,21 +86,18 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                                 }
                                 echo "</select>";
                                 echo "</td>";
-                                if(count($value['peers'])>1){
-                                    echo "<td>";
-                                    echo "<select class='form-control' name='peersid2id[]'>";
-                                    foreach ($value['peers'] as $key => $_value) {
-                                        if($value['vpeersid2']!=null && $value['vpeersid2'] == $_value['id']){
-                                            echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
-                                        }else{
-                                            echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
-                                        }
-                                    }
-                                    echo "</select>";
-                                    echo "</td>";
-                                }else{
-                                    echo "<td><input type='hidden' class='form-control' name='peersid2id[]' value=0 />-</td>";
+
+                                echo "<td>";
+                                echo "<select class='form-control' name='peersid2id[]'>";
+                                foreach ($peers as $key => $_value) {
+                                   if($value['vpeersid1']!=null && $value['vpeersid2'] == $_value['id']){
+                                     echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                   }else{
+                                        echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                   }
                                 }
+                                echo "</select>";
+                                echo "</td>";
                             }else{
                                 echo "<td><input type='hidden' class='form-control' name='peersid1id[]' value=0 />-</td>";
                                 echo "<td><input type='hidden' class='form-control' name='peersid2id[]' value=0 />-</td>";
@@ -121,10 +132,10 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                                 echo "<td><input type='hidden' class='form-control' name='superiorid2[]' value=0 />-</td>";
                             }
                         
-                            if($value['subordinate']!=null && count($value['subordinate'])>1){
+                            if($subordinate){
                                 echo "<td>";
                                 echo "<select class='form-control' name='subordinate1id[]'>";
-                                foreach ($value['subordinate'] as $key => $_value) {
+                                foreach ($subordinate as $key => $_value) {
                                     if($value['vsubordinateid1']!=null && $value['vsubordinateid1'] == $_value['id']){
                                         echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
                                       }else{
@@ -134,23 +145,17 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                                 echo "</select>";
                                 echo "</td>";
 
-                                if(count($value['subordinate'])>1){
-                                    echo "<td>";
-                                    echo "<select class='form-control' name='subordinate2id[]'>";
-                                    $i=0;
-                                    foreach ($value['subordinate'] as $key => $_value) {
-                                        if($value['vsubordinateid2']!=null && $value['vsubordinateid2'] == $_value['id']){
-                                            echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
-                                          }else{
-                                               echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
-                                          }
-                                       $i++;
-                                    }
-                                    echo "</select>";
-                                    echo "</td>";
-                                }else{
-                                    echo "<td><input type='hidden' class='form-control' name='subordinate2id[]' value=0 />-</td>";
+                                echo "<td>";
+                                echo "<select class='form-control' name='subordinate2id[]'>";
+                                foreach ($subordinate as $key => $_value) {
+                                    if($value['vsubordinateid1']!=null && $value['vsubordinateid2'] == $_value['id']){
+                                        echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                      }else{
+                                           echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                      }
                                 }
+                                echo "</select>";
+                                echo "</td>";
                             }else{
                                 echo "<td><input type='hidden' class='form-control' name='subordinate1id[]' value=0 />-</td>";
                                 echo "<td><input type='hidden' class='form-control' name='subordinate2id[]' value=0 />-</td>";

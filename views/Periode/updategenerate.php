@@ -60,8 +60,10 @@ $urlindex = Url::to(['index']);
                                     'name'=>'Pilih Subordinate',
                                 ]
                             ];
-                            $peers = $value['peers']!=null? array_merge($peers,$value['peers']):null;
-                            $subordinate = $value['subordinate']!=null?array_merge($subordinate,$value['subordinate']):null;
+                            // $peers = $value['peers']!=null? array_merge($peers,$value['peers']):null;
+                            // $subordinate = $value['subordinate']!=null?array_merge($subordinate,$value['subordinate']):null;
+                            $peers = $listAll!=null?array_merge($peers,$listAll):null;
+                            $subordinate = $listAll!=null?array_merge($subordinate,$listAll):null;
                             echo "<tr>";
                             echo "<td>$a</td>";
                             echo "<input type='hidden' name='employeeid[]' value='".$value['employeeid']."' />";

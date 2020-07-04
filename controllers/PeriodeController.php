@@ -207,11 +207,7 @@ class PeriodeController extends Controller
                 'name'=>'Pilih Atasan',
             ],
         ];
-        //getsuperior
-        $_superiors = Employment::find()
-                                ->where(['<=','JoinDate',$_periode->Start])
-                                // ->andWhere(['EmployeeSuperiorID'=>null])
-                                ->all();
+        $_superiors = $this->getSuperior($_periode->End);
         if($_superiors!=null){
             $i=1;
             foreach ($_superiors as $key => $value) {
@@ -231,17 +227,14 @@ class PeriodeController extends Controller
         $_pas = Performanceappraisal::find()
                                     ->where(['PeriodeID'=>$id])
                                     ->all();
+        $_listAll = $this->getAllKaryawan($_periode->End);
         $_listsuperior = [
             0=>[
                 'id'=>0,
                 'name'=>'Pilih Atasan',
             ],
         ];
-        //getsuperior
-        $_superiors = Employment::find()
-                                ->where(['<=','JoinDate',$_periode->Start])
-                                // ->andWhere(['EmployeeSuperiorID'=>null])
-                                ->all();
+        $_superiors = $this->getSuperior($_periode->End);
         if($_superiors!=null){
             $i=1;
             foreach ($_superiors as $key => $value) {
@@ -256,40 +249,40 @@ class PeriodeController extends Controller
         if($_pas!=null){
             $i=0;
             foreach ($_pas as $key => $_value) {
-                $__peers = [
-                    0=>[
-                        'id'=>0,
-                        'name'=>'Pilih Peers'
-                    ],
-                ];
-                $__subordinate = [
-                    0=>[
-                        'id'=>0,
-                        'name'=>'Pilih Subordinate'
-                    ],
-                ];
-                $_squad = $this->getPeers($id,$_value->employee->SquadID, $_value->employee->JobPositionID, $_value->employee->OrganizationID, $_value->EmployeeID);
-                $_subordinate = $this->getSubordinate($id,$_value->EmployeeID);
-                if($_squad!=null){
-                    $j=1;
-                    foreach ($_squad as $key => $value) {
-                        $__peers[$j] = [
-                            'id'=>$value->EmployeeID,
-                            'name'=>$value->personal->FullName,
-                        ];
-                        $j++;
-                    }
-                }
-                if($_subordinate!=null){
-                    $j=1;
-                    foreach ($_subordinate as $key => $value) {
-                        $__subordinate[$j] = [
-                            'id'=>$value->EmployeeID,
-                            'name'=>$value->personal->FullName,
-                        ];
-                        $j++;
-                    }
-                }
+                // $__peers = [
+                //     0=>[
+                //         'id'=>0,
+                //         'name'=>'Pilih Peers'
+                //     ],
+                // ];
+                // $__subordinate = [
+                //     0=>[
+                //         'id'=>0,
+                //         'name'=>'Pilih Subordinate'
+                //     ],
+                // ];
+                // $_squad = $this->getPeers($_periode->End,$_value->employee->SquadID, $_value->employee->JobPositionID, $_value->employee->OrganizationID, $_value->EmployeeID);
+                // $_subordinate = $this->getSubordinate($_periode->End,$_value->EmployeeID);
+                // if($_squad!=null){
+                //     $j=1;
+                //     foreach ($_squad as $key => $value) {
+                //         $__peers[$j] = [
+                //             'id'=>$value->EmployeeID,
+                //             'name'=>$value->personal->FullName,
+                //         ];
+                //         $j++;
+                //     }
+                // }
+                // if($_subordinate!=null){
+                //     $j=1;
+                //     foreach ($_subordinate as $key => $value) {
+                //         $__subordinate[$j] = [
+                //             'id'=>$value->EmployeeID,
+                //             'name'=>$value->personal->FullName,
+                //         ];
+                //         $j++;
+                //     }
+                // }
                 $_superior1name = '-';
                 if($_value->employee->EmployeeSuperiorID!=null){
                     if($_value->employee->employeeSuperior->personal!=null){
@@ -303,8 +296,8 @@ class PeriodeController extends Controller
                     'squad'=>$_value->employee->squad==null?'-':$_value->employee->squad->SquadName,
                     'jobposition'=>$_value->employee->jobPosition==null?'-':$_value->employee->jobPosition->JobPositionName,
                     'aliasJob'=>$_value->employee->AKA_JobPosition,
-                    'peers'=>$__peers,
-                    'subordinate'=>$__subordinate,
+                    // 'peers'=>$__peers,
+                    // 'subordinate'=>$__subordinate,
                     'superior1id'=>$_value->employee->EmployeeSuperiorID,
                     'superior1name'=>$_superior1name,
                     'vpeersid1'=>$_value->PeersID1,
@@ -322,15 +315,23 @@ class PeriodeController extends Controller
             'employee'=>$_pas,
             'periode'=>$_periode,
             'arr'=>$_arr,
-            'superiors'=>$_listsuperior
+            'superiors'=>$_listsuperior,
+            'listAll'=>$_listAll
         ]);
     }
 
     private function generate($id){
         $_periode = $this->findModel($id);
         $_employee = Employment::find()
-                                ->where(['<=', 'JoinDate', $_periode->Start])
+                                ->joinWith('personal')
+                                ->joinWith('jobPosition')
+                                ->where(['<=', 'employment.JoinDate', $_periode->End])
+                                ->orderBy([
+                                    'jobposition.Level'=>SORT_ASC,
+                                    'personalinfo.FullName'=>SORT_ASC,
+                                ])
                                 ->all();
+        $_listAll = $this->getAllKaryawan($_periode->End);
         $_arr = [];
         if($_employee!=null){
             $i=0;
@@ -341,8 +342,8 @@ class PeriodeController extends Controller
                $vpeers2=null;
                $vsubodinate1 = null;
                $vsubordinate2=null;
-               $_squad = $this->getPeers($id,$_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
-               $_subordinate = $this->getSubordinate($id,$_value->EmployeeID);
+               $_squad = $this->getPeers($_periode->End,$_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
+               $_subordinate = $this->getSubordinate($_periode->End,$_value->EmployeeID);
                if($_squad!=null){
                  $j=0;
                  foreach ($_squad as $key => $value) {
@@ -394,39 +395,74 @@ class PeriodeController extends Controller
         return [
             'employee'=>$_employee,
             'periode'=>$_periode,
-            'arr'=>$_arr
+            'arr'=>$_arr,
+            'listAll'=>$_listAll,
         ];
     }
 
-    private function getPeers($idp,$sqid,$jpid, $orid, $except){
-        $periode = $this->findModel($idp);
+    private function getPeers($end,$sqid,$jpid, $orid, $except){
         $_squad = Employment::find()
                             ->where(['SquadID'=>$sqid])
                             ->andWhere(['JobPositionID'=>$jpid])
                             ->andWhere(['<>','EmployeeID',$except])
-                            ->andWhere(['<=', 'JoinDate', $periode->Start])
+                            ->andWhere(['<=', 'JoinDate', $end])
                             ->all();
         if($sqid==null){
             $_squad = Employment::find()
                         ->where(['OrganizationID'=>$orid])
                         ->andWhere(['JobPositionID'=>$jpid])
                         ->andWhere(['<>','EmployeeID',$except])
-                        ->andWhere(['<=', 'JoinDate', $periode->Start])
+                        ->andWhere(['<=', 'JoinDate', $end])
                         ->all();
         }
         shuffle($_squad);
         return $_squad;
     }
 
-    private function getSubordinate($idp,$employeeid){
-        $periode = $this->findModel($idp);
+    private function getSubordinate($end,$employeeid){
         $_subordinate = Employment::find()
                                 ->where(['EmployeeSuperiorID'=>$employeeid])
                                 ->andWhere(['<>','EmployeeID',$employeeid])
-                                ->andWhere(['<=', 'JoinDate', $periode->Start])
+                                ->andWhere(['<=', 'JoinDate', $end])
                                 ->all();
         shuffle($_subordinate);
         return $_subordinate;
+    }
+
+    private function getSuperior($end,$level=null){
+        $atasan = Employment::find()
+                            ->joinWith('jobPosition')
+                            ->joinWith('personal')
+                            ->andWhere(['<=', 'employment.JoinDate', $end])
+                            ->andWhere(['<>','jobposition.Level','Staff']);
+        if($level!=null){
+            $atasan = $atasan->andWhere(['<','jobPosition.Level',$level]);
+        }
+        return $atasan->orderBy(['personalinfo.FullName'=>SORT_ASC,
+                                'jobPosition.Level'=>SORT_ASC])
+                        ->all();
+    }
+
+    private function getAllKaryawan($end){
+        $all = Employment::find()
+                        ->joinWith('jobPosition')
+                        ->joinWith('personal')
+                        ->where(['<=', 'employment.JoinDate', $end])
+                        ->orderBy(['jobposition.Level'=>SORT_ASC,
+                                'personalinfo.FullName'=>SORT_ASC])
+                        ->all();
+        $_listAll = null;
+        if($all!=null){
+            $i=1;
+            foreach ($all as $key => $value) {
+                $_listAll[$i] = [
+                    'id'=>$value->EmployeeID,
+                    'name'=>$value->personal->FullName,
+                ];
+                $i++;
+            }
+        }
+        return $_listAll;
     }
 
     public function actionSave($id){

@@ -119,7 +119,12 @@ class PersonalinfoController extends Controller
         $modelEmployment = new Employment();
         $statusEmployment = Employeestatus::find()->all();
         $atasan = Employment::find()
-                        // ->where(['EmployeeSuperiorID'=>null])
+                        ->joinWith('jobPosition')
+                        ->joinWith('personal')
+                        // ->where(['employment.EmployeeSuperiorID'=>null])
+                        ->andWhere(['<>','jobposition.JobPositionName','Staff'])
+                        ->orderBy(['jobposition.Level'=>SORT_ASC,
+                                    'personalinfo.FullName'=>SORT_ASC])
                         ->all();
         $organization = Organization::find()->all();
         $jobposition = Jobposition::find()->all();
@@ -170,7 +175,12 @@ class PersonalinfoController extends Controller
         }
         $statusEmployment = Employeestatus::find()->all();
         $atasan = Employment::find()
-                        // ->where(['EmployeeSuperiorID'=>null])
+                        ->joinWith('jobPosition')
+                        ->joinWith('personal')
+                        // ->where(['employment.EmployeeSuperiorID'=>null])
+                        ->andWhere(['<>','jobposition.JobPositionName','Staff'])
+                        ->orderBy(['jobposition.Level'=>SORT_ASC,
+                                    'personalinfo.FullName'=>SORT_ASC])
                         ->all();
         $organization = Organization::find()->all();
         $jobposition = Jobposition::find()->all();
