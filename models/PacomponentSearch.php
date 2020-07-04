@@ -54,7 +54,8 @@ class PacomponentSearch extends Model
                             ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID');
         if($isSuperior && $role!='admin'){
             $modelpa = Performanceappraisal::find()
-                                        ->where(['SuperiorID1'=>$eid])
+                                        ->where(['EmployeeID'=>$eid])
+                                        ->orWhere(['SuperiorID1'=>$eid])
                                         ->orWhere(['SuperiorID2'=>$eid])
                                         ->andWhere(['Status'=>'1'])
                                         ->all();
@@ -83,6 +84,8 @@ class PacomponentSearch extends Model
             ->orFilterWhere(['like', 'personalinfo.Address', $field])
             ->orFilterWhere(['like', 'personalinfo.Email', $field]);
         $query->andFilterWhere(['pacomponent.PeriodeID'=>$idpa]);
+        $query->orderBY(['personalinfo.FullName'=>SORT_ASC,
+                        'pacomponent.PAComponentID'=>SORT_ASC]);
         return $dataProvider;
     }
 }
