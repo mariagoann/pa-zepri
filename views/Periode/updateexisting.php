@@ -51,16 +51,16 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                 <tbody>
                     <?php
                         echo "<input type='hidden' name='mode' id='mode' value=0 />";
-                        $i=1;
+                        $a=1;
                         foreach ($arr as $key => $value) {
                             echo "<tr>";
-                            echo "<td>$i</td>";
+                            echo "<td>$a</td>";
                             echo "<input type='hidden' name='paid[]' value='".$value['paid']."' />";
                             echo "<input type='hidden' name='employeeid[]' value='".$value['employeeid']."' />";
                             echo "<td>".$value['name']."</td>";
                             echo "<td>".$value['squad']."</td>";
                             echo $value['aliasJob']==null?"<td>".$value['jobposition']."</td>":"<td>".$value['aliasJob']."</td>";
-                            if($value['peers']!=null){
+                            if($value['peers']!=null && count($value['peers'])>1){
                                 echo "<td>";
                                 echo "<select class='form-control' name='peersid1id[]'>";
                                 foreach ($value['peers'] as $key => $_value) {
@@ -121,7 +121,7 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                                 echo "<td><input type='hidden' class='form-control' name='superiorid2[]' value=0 />-</td>";
                             }
                         
-                            if($value['subordinate']!=null){
+                            if($value['subordinate']!=null && count($value['subordinate'])>1){
                                 echo "<td>";
                                 echo "<select class='form-control' name='subordinate1id[]'>";
                                 foreach ($value['subordinate'] as $key => $_value) {
@@ -156,7 +156,7 @@ $urlindex = Url::to(['view','id'=>$_GET['id']]);
                                 echo "<td><input type='hidden' class='form-control' name='subordinate2id[]' value=0 />-</td>";
                             }
                             echo "</tr>";
-                            $i++;
+                            $a++;
                         }
                     ?>
                 </tbody>

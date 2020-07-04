@@ -20,20 +20,43 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-                [
-                    'attribute'=>'Nama',
-                    'format'=>'raw',
-                    'value'=>'FullName'
-                ],
+                'FullName',
                 [
                     'attribute'=>'Organization',
                     'format'=>'raw',
                     'value'=>'employments.organization.OrganizationName'
                 ],
                 [
+                    'attribute'=>'Job Position',
+                    'format'=>'raw',
+                    'value'=>function($data){
+                        $job='-';
+                        if($data->employments!=null){
+                            $job = $data->employments->AKA_JobPosition!=null?$data->employments->AKA_JobPosition
+                                            :$data->employments->jobPosition->JobPositionName;
+                        }
+                        return $job;
+                    }
+                ],
+                [
+                    'attribute'=>'Job Level',
+                    'format'=>'raw',
+                    'value'=>'employments.level.LevelName',
+                ],
+                [
+                    'attribute'=>'Job Title',
+                    'format'=>'raw',
+                    'value'=>'employments.jobTitle.JobTitleName',
+                ],
+                [
                     'attribute'=>'Squad',
                     'format'=>'raw',
-                    'value'=>'employments.squad.SquadName'
+                    'value'=>'employments.squad.SquadName',
+                ],
+                [
+                    'attribute'=>'Atasan Langsung',
+                    'format'=>'raw',
+                    'value'=>'employments.employeeSuperior.personal.FullName',
                 ],
                 ['class' => 'yii\grid\ActionColumn'],
             ],

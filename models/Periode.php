@@ -35,6 +35,7 @@ class Periode extends \yii\db\ActiveRecord
             [['Start', 'End', 'LastModified'], 'required'],
             [['Start', 'End', 'LastModified'], 'safe'],
             [['Status'], 'string', 'max' => 1],
+            [['Start','End'],'validatedate']
         ];
     }
 
@@ -52,6 +53,14 @@ class Periode extends \yii\db\ActiveRecord
         ];
     }
 
+    public function validatedate(){
+        $end_date = strtotime($this->End);
+        $start_date = strtotime($this->Start);
+        if (!$this->hasErrors() && $start_date > $end_date) {
+            $this->addError('Start', 'Start must less than End');
+            $this->addError('End', 'End must greater than Start');
+        }
+    }
     /**
      * Gets query for [[Pacomponents]].
      *

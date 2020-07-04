@@ -209,7 +209,7 @@ class PeriodeController extends Controller
         ];
         //getsuperior
         $_superiors = Employment::find()
-                                ->where(['<','JoinDate',$_periode->Start])
+                                ->where(['<=','JoinDate',$_periode->Start])
                                 // ->andWhere(['EmployeeSuperiorID'=>null])
                                 ->all();
         if($_superiors!=null){
@@ -239,7 +239,7 @@ class PeriodeController extends Controller
         ];
         //getsuperior
         $_superiors = Employment::find()
-                                ->where(['<','JoinDate',$_periode->Start])
+                                ->where(['<=','JoinDate',$_periode->Start])
                                 // ->andWhere(['EmployeeSuperiorID'=>null])
                                 ->all();
         if($_superiors!=null){
@@ -282,7 +282,7 @@ class PeriodeController extends Controller
                 }
                 if($_subordinate!=null){
                     $j=1;
-                    foreach ($_squad as $key => $value) {
+                    foreach ($_subordinate as $key => $value) {
                         $__subordinate[$j] = [
                             'id'=>$value->EmployeeID,
                             'name'=>$value->personal->FullName,
@@ -329,7 +329,7 @@ class PeriodeController extends Controller
     private function generate($id){
         $_periode = $this->findModel($id);
         $_employee = Employment::find()
-                                ->where(['<', 'JoinDate', $_periode->Start])
+                                ->where(['<=', 'JoinDate', $_periode->Start])
                                 ->all();
         $_arr = [];
         if($_employee!=null){
@@ -337,6 +337,10 @@ class PeriodeController extends Controller
             foreach ($_employee as $key => $_value) {
                $__peers = null;
                $__subordinate = null;
+               $vpeers1=null;
+               $vpeers2=null;
+               $vsubodinate1 = null;
+               $vsubordinate2=null;
                $_squad = $this->getPeers($id,$_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
                $_subordinate = $this->getSubordinate($id,$_value->EmployeeID);
                if($_squad!=null){
@@ -348,16 +352,20 @@ class PeriodeController extends Controller
                      ];
                      $j++;
                  }
+                 $vpeers1 = count($__peers)!=0?$__peers[0]['id']:null;
+                 $vpeers2 = count($__peers)>1?$__peers[1]['id']:null;
                }
                if($_subordinate!=null){
                     $j=0;
-                    foreach ($_squad as $key => $value) {
+                    foreach ($_subordinate as $key => $value) {
                         $__subordinate[$j] = [
                             'id'=>$value->EmployeeID,
                             'name'=>$value->personal->FullName,
                         ];
                         $j++;
                     }
+                    $vsubodinate1 = count($__subordinate)!=0?$__subordinate[0]['id']:null;
+                    $vsubordinate2 = count($__subordinate)>1?$__subordinate[1]['id']:null;
                 }
                 $_superior1name = '-';
                 if($_value->EmployeeSuperiorID!=null){
@@ -374,7 +382,11 @@ class PeriodeController extends Controller
                    'peers'=>$__peers,
                    'subordinate'=>$__subordinate,
                    'superior1id'=>$_value->EmployeeSuperiorID,
-                   'superior1name'=>$_superior1name
+                   'superior1name'=>$_superior1name,
+                   'vpeers1'=>$vpeers1,
+                   'vpeers2'=>$vpeers2,
+                   'vsubordinate1'=>$vsubodinate1,
+                   'vsubordinate2'=>$vsubordinate2,
                ];
                $i++;
             } 
@@ -392,14 +404,14 @@ class PeriodeController extends Controller
                             ->where(['SquadID'=>$sqid])
                             ->andWhere(['JobPositionID'=>$jpid])
                             ->andWhere(['<>','EmployeeID',$except])
-                            ->andWhere(['<', 'JoinDate', $periode->Start])
+                            ->andWhere(['<=', 'JoinDate', $periode->Start])
                             ->all();
         if($sqid==null){
             $_squad = Employment::find()
                         ->where(['OrganizationID'=>$orid])
                         ->andWhere(['JobPositionID'=>$jpid])
                         ->andWhere(['<>','EmployeeID',$except])
-                        ->andWhere(['<', 'JoinDate', $periode->Start])
+                        ->andWhere(['<=', 'JoinDate', $periode->Start])
                         ->all();
         }
         shuffle($_squad);
@@ -411,7 +423,7 @@ class PeriodeController extends Controller
         $_subordinate = Employment::find()
                                 ->where(['EmployeeSuperiorID'=>$employeeid])
                                 ->andWhere(['<>','EmployeeID',$employeeid])
-                                ->andWhere(['<', 'JoinDate', $periode->Start])
+                                ->andWhere(['<=', 'JoinDate', $periode->Start])
                                 ->all();
         shuffle($_subordinate);
         return $_subordinate;

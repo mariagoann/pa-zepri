@@ -46,39 +46,52 @@ $urlindex = Url::to(['index']);
                 <tbody>
                     <?php
                         echo "<input type='hidden' name='mode' id='mode' value=0 />";
-                        $i=1;
+                        $a=1;
                         foreach ($arr as $key => $value) {
+                            $peers = [
+                                0=>[
+                                    'id'=>0,
+                                    'name'=>'Pilih Peers',
+                                ]
+                            ];
+                            $subordinate = [
+                                0=>[
+                                    'id'=>0,
+                                    'name'=>'Pilih Subordinate',
+                                ]
+                            ];
+                            $peers = $value['peers']!=null? array_merge($peers,$value['peers']):null;
+                            $subordinate = $value['subordinate']!=null?array_merge($subordinate,$value['subordinate']):null;
                             echo "<tr>";
-                            echo "<td>$i</td>";
+                            echo "<td>$a</td>";
                             echo "<input type='hidden' name='employeeid[]' value='".$value['employeeid']."' />";
                             echo "<td>".$value['name']."</td>";
                             echo "<td>".$value['squad']."</td>";
                             echo $value['aliasJob']==null?"<td>".$value['jobposition']."</td>":"<td>".$value['aliasJob']."</td>";
-                            if($value['peers']!=null){
+                            if($peers!=null){
                                 echo "<td>";
                                 echo "<select class='form-control' name='peersid1id[]'>";
-                                foreach ($value['peers'] as $key => $_value) {
-                                   echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                foreach ($peers as $key => $_value) {
+                                    if($_value['id']==$value['vpeers1']){
+                                        echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                    }else{
+                                        echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                    }
                                 }
                                 echo "</select>";
                                 echo "</td>";
-                                if(count($value['peers'])>1){
-                                    echo "<td>";
-                                    echo "<select class='form-control' name='peersid2id[]'>";
-                                    $i=0;
-                                    foreach ($value['peers'] as $key => $_value) {
-                                        if($i==1){
-                                            echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
-                                        }else{
-                                            echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
-                                        }
-                                       $i++;
+
+                                echo "<td>";
+                                echo "<select class='form-control' name='peersid2id[]'>";
+                                foreach ($peers as $key => $_value) {
+                                    if($_value['id']==$value['vpeers2']){
+                                        echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                    }else{
+                                        echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
                                     }
-                                    echo "</select>";
-                                    echo "</td>";
-                                }else{
-                                    echo "<td><input type='hidden' class='form-control' name='peersid2id[]' value=0 />-</td>";
                                 }
+                                echo "</select>";
+                                echo "</td>";
                             }else{
                                 echo "<td><input type='hidden' class='form-control' name='peersid1id[]' value=0 />-</td>";
                                 echo "<td><input type='hidden' class='form-control' name='peersid2id[]' value=0 />-</td>";
@@ -109,38 +122,37 @@ $urlindex = Url::to(['index']);
                                 echo "<td><input type='hidden' class='form-control' name='superiorid2[]' value=0 />-</td>";
                             }
                         
-                            if($value['subordinate']!=null){
+                            if($subordinate!=null){
                                 echo "<td>";
                                 echo "<select class='form-control' name='subordinate1id[]'>";
-                                foreach ($value['subordinate'] as $key => $_value) {
-                                   echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                foreach ($subordinate as $key => $_value) {
+                                    if($_value['id']==$value['vsubordinate1']){
+                                        echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                    }else{
+                                        echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
+                                    }
                                 }
                                 echo "</select>";
                                 echo "</td>";
 
-                                if(count($value['subordinate'])>1){
-                                    echo "<td>";
-                                    echo "<select class='form-control' name='subordinate2id[]'>";
-                                    $i=0;
-                                    foreach ($value['subordinate'] as $key => $_value) {
-                                        if($i==1){
-                                            echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
-                                        }else{
-                                            echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
-                                        }
-                                       $i++;
+                                echo "<td>";
+                                echo "<select class='form-control' name='subordinate2id[]'>";
+                                foreach ($subordinate as $key => $_value) {
+                                    if($_value['id']==$value['vsubordinate2']){
+                                        echo "<option value='".$_value['id']."' selected>".$_value['name']."</option>";
+                                    }else{
+                                        echo "<option value='".$_value['id']."'>".$_value['name']."</option>";
                                     }
-                                    echo "</select>";
-                                    echo "</td>";
-                                }else{
-                                    echo "<td><input type='hidden' class='form-control' name='subordinate2id[]' value=0 />-</td>";
                                 }
+                                echo "</select>";
+                                echo "</td>";
+
                             }else{
                                 echo "<td><input type='hidden' class='form-control' name='subordinate1id[]' value=0 />-</td>";
                                 echo "<td><input type='hidden' class='form-control' name='subordinate2id[]' value=0 />-</td>";
                             }
                             echo "</tr>";
-                            $i++;
+                            $a++;
                         }
                     ?>
                 </tbody>

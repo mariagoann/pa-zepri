@@ -70,7 +70,7 @@ class Personalinfo extends \yii\db\ActiveRecord
     {
         return [
             'PersonalID' => 'Personal ID',
-            'FullName' => 'Full Name',
+            'FullName' => 'Nama',
             'IdentityType' => 'Identity Type',
             'IdentityNumber' => 'Identity Number',
             'IdentityExpiryDate' => 'Identity Expiry Date',
