@@ -538,17 +538,17 @@ class PeriodeController extends Controller
         $_valuesPeers2 = [];
         $_valuesSubordinate1=[];
         $_valuesSubordinate2=[];
-    
+        
         $modelPAC = Pacomponent::find()
                                 ->where(['PAComponentID'=>$id])
                                 ->one();
         if($id==null){
             $modelPAC = Pacomponent::find()
-                                    ->where(['EmployeeID'=>$eid])
-                                    ->andWhere(['PeriodeID'=>$pid])
-                                    ->one();
+                            ->where(['EmployeeID'=>$eid])
+                            ->andWhere(['PeriodeID'=>$pid])
+                            ->one();
         }
-
+        $flag = Yii::$app->session->get('employeeid')==$modelPAC->EmployeeID?true:false;
         if($modelPAC!=null){
             $paself = Paparameter::find()
                             ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
@@ -645,6 +645,7 @@ class PeriodeController extends Controller
             'superior2'=>$_superior2score,
             'subordinate1'=>$_valuesSubordinate1,
             'subordinate2'=>$_valuesSubordinate2,
+            'flag'=>$flag,
         ];
     }
 

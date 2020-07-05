@@ -89,18 +89,22 @@ Yii::$app->formatter->format($model->periode->End, 'date' );
                 </thead>
                 <tbody>
                     <?php
-                        echo "<tr>";
-                        echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
-                        echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
-                        echo $superior2!=null?"<td>".$superior2['by']."</td>":"<td>-</td>";
-                        echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
-                        echo $peers1!=null?"<td>".$peers1['by']."</td>":"<td>-</td>";
-                        echo $peers2!=null?"<td>".$peers2['by']."</td>":"<td>-</td>";
-                        echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
-                        echo $superior2!=null?"<td>".$superior2['by']."</td>":"<td>-</td>";
-                        echo $subordinate1!=null?"<td>".$subordinate1['by']."</td>":"<td>-</td>";
-                        echo $subordinate2!=null?"<td>".$subordinate2['by']."</td>":"<td>-</td>";
-                        echo "<tr>";
+                        $role = Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
+                        $isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):null;
+                        if(($role=='admin'||$isSuperior) && !$flag){
+                            echo "<tr>";
+                            echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
+                            echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
+                            echo $superior2!=null?"<td>".$superior2['by']."</td>":"<td>-</td>";
+                            echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
+                            echo $peers1!=null?"<td>".$peers1['by']."</td>":"<td>-</td>";
+                            echo $peers2!=null?"<td>".$peers2['by']."</td>":"<td>-</td>";
+                            echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
+                            echo $superior2!=null?"<td>".$superior2['by']."</td>":"<td>-</td>";
+                            echo $subordinate1!=null?"<td>".$subordinate1['by']."</td>":"<td>-</td>";
+                            echo $subordinate2!=null?"<td>".$subordinate2['by']."</td>":"<td>-</td>";
+                            echo "<tr>";
+                        }
 
                         echo "<tr>";
                         echo $self!=null?"<td>".$self['scoreEmployee']."</td>":"<td>-</td>";

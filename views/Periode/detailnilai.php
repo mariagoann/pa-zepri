@@ -102,9 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </thead>
                 <tbody>
                     <?php
-                        $role = Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
-                        $isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):null;
-                        if($role=='admin'||$isSuperior){
+                        if(($role=='admin'||$isSuperior) && !$flag){
                             echo "<tr>";
                             echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
                             echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
@@ -118,7 +116,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             echo $subordinate2!=null?"<td>".$subordinate2['by']."</td>":"<td>-</td>";
                             echo "<tr>";
                         }
-
 
                         echo "<tr>";
                         echo $self!=null?"<td>".$self['scoreEmployee']."</td>":"<td>-</td>";
@@ -154,8 +151,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <p>
                 <?php
                     $button = Html::a('Generate To PDF', ['genpdf','id'=>$model->PAComponentID], ['class' => 'btn btn-primary']);
-                    $eid = Yii::$app->session->get('employeeid');
-                    if(!$isSuperior){
+                    $eid = $model->EmployeeID;
+                    if(!$isSuperior && $role!='admin' ){
                         $button = Html::a('Generate To PDF', ['genpdf','id'=>null,'eid'=>$eid,'pid'=>$model->PeriodeID], ['class' => 'btn btn-primary']);
                     }
                     echo $button;
