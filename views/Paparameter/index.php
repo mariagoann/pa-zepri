@@ -20,6 +20,13 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 <?php endif; ?>
 
+<?php if (Yii::$app->session->hasFlash('successedit')): ?>
+    <div class="alert alert-success alert-dismissable">
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+         <?= Yii::$app->session->getFlash('successedit') ?>
+    </div>
+<?php endif; ?>
+
 
 <?php if (Yii::$app->session->hasFlash('error')): ?>
     <div class="alert alert-danger alert-dismissable">

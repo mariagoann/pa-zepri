@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\PersonalInfo;
 use app\models\User;
+use app\models\Employment;
 
 class SiteController extends Controller
 {
@@ -92,8 +93,11 @@ class SiteController extends Controller
                 $isSuperior=false;
                 $employeeid = null;
                 if($personalinfo->employments!=null){
-                    $isSuperior = $personalinfo->employments->EmployeeSuperiorID==null?true:false;
                     $employeeid = $personalinfo->employments->EmployeeID;
+                    $_isSuperior = Employment::find()
+                                            ->where(['EmployeeSuperiorID'=>$employeeid])
+                                            ->count();
+                    $isSuperior = $_isSuperior!=0?true:false;
                 }
                 Yii::$app->session->set('fullname',$personalinfo->FullName);
                 Yii::$app->session->set('isSuperior',$isSuperior);

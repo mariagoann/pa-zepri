@@ -267,8 +267,8 @@ class PaparameterController extends Controller
             //doCalculation
             $calculate = $this->doCalculation($id);
             if($calculate){
-                if(!Yii::$app->session->has('success')){
-                    Yii::$app->session->setFlash('success', "Anda berhasil melakukan penilaian. Terima Kasih.");
+                if(!Yii::$app->session->has('successedit')){
+                    Yii::$app->session->setFlash('successedit', "Anda berhasil melakukan perubahan penilaian. Terima Kasih.");
                 }
             }else{
                 if(!Yii::$app->session->has('error')){
@@ -313,9 +313,9 @@ class PaparameterController extends Controller
                     ];
                     $i++;
                 }elseif(strpos($value->TypePA, 'superior')!==false){
-                    $_isSuperior = $this->isSuperior($value->performanceAppraisal->EmployeeID);
+                    $_countSubs = $this->countSubsOnPeriode($value->performanceAppraisal->EmployeeID);
                     $_avgValues = 0;
-                    if(strtolower($_positionReviwee)=='head' || $_isSuperior==false){
+                    if(strtolower($_positionReviwee)=='head' || $_countSubs==0){
                         $_avgValues = floatval((75/100 * $value->AvgValues));
                     }else{
                         $_avgValues = floatval((60/100 * $value->AvgValues));
@@ -414,15 +414,17 @@ class PaparameterController extends Controller
         return false;
     }
 
-    private function isSuperior($idemployee){
-        $find = Employment::find()
-                        ->where(['EmployeeSuperiorID'=>$idemployee])
-                        ->all();
-        if($find!=null){
-            return true;
-        }
-        return false;
+    /**
+     * cek karyawan tidak memiliki bawahan penilai pada periode berjalan
+     */
+    private function countSubsOnPeriode($idpa){
+        $all = Paparameter::find()
+                            ->where(['PerformanceAppraisalID'=>$idpa])
+                            ->andWhere(['like','TypePA','%subordinate%',false])
+                            ->count();
+        return $all;
     }
+
 
     private function mapType($type){
         $type = explode('-', $type);

@@ -326,6 +326,7 @@ class PeriodeController extends Controller
                                 ->joinWith('personal')
                                 ->joinWith('jobPosition')
                                 ->where(['<=', 'employment.JoinDate', $_periode->End])
+                                ->andWhere(['<>','AKA_JobPosition', 'CEO'])
                                 ->orderBy([
                                     'jobposition.Level'=>SORT_ASC,
                                     'personalinfo.FullName'=>SORT_ASC,
@@ -549,36 +550,89 @@ class PeriodeController extends Controller
         }
 
         if($modelPAC!=null){
-            $pa = Paparameter::find()
+            $paself = Paparameter::find()
                             ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
+                            ->andWhere(['like','TypePA', '%self%',false])
+                            ->one();
+            $papeers = Paparameter::find()
+                            ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
+                            ->andWhere(['like','TypePA', '%peers%',false])
+                            ->orderBy(['TypePA'=>SORT_ASC])
                             ->all();
-            if($pa!=null){
-                foreach ($pa as $key => $value) {
-                    $type = explode('-',$value['TypePA']);
-                    $count =0;
-                    if(array_key_exists(1,$type)){
-                        $count = (int)$type[1];
-                    }
-                    $_temp = [
-                        'by'=>$value->reviewBy->personal->FullName,
-                        'scoreEmployee'=>number_format($value['EmployeePerformanceScore'],2),
-                        'avgValues'=>number_format($value['AvgValues'],2),
-                    ];
-                    if($type[0]=='self'){
-                        $_selfScore = $_temp;
-                    }elseif($type[0]=='superior' && $count==1){
-                        $_superior1score = $_temp;
-                    }elseif($type[0]=='superior' && $count>1){
-                        $_superior2score =$_temp;
-                    }elseif($type[0]=="peers" && $count==1){
-                        $_valuesPeers1 = $_temp;
-                    }elseif($type[0]=="peers" && $count>1){
-                        $_valuesPeers2 = $_temp;
-                    }elseif($type[0]=="subordinate" && $count==1){
-                        $_valuesSubordinate1 = $_temp;
-                    }elseif($type[0]=="subordinate" && $count>1){
-                        $_valuesSubordinate2 = $_temp;
-                    }
+            $pasuperior = Paparameter::find()
+                            ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
+                            ->andWhere(['like','TypePA', '%superior%',false])
+                            ->orderBy(['TypePA'=>SORT_ASC])
+                            ->all();
+            $pasubordinate = Paparameter::find()
+                            ->where(['PerformanceAppraisalID'=>$modelPAC->PerformanceAppraisalID])
+                            ->andWhere(['like','TypePA', '%subordinate%',false])
+                            ->orderBy(['TypePA'=>SORT_ASC])
+                            ->all();
+            if($paself!=null){
+                $_selfScore = [
+                    'by'=>$paself->reviewBy->personal->FullName,
+                    'scoreEmployee'=>number_format($paself->EmployeePerformanceScore,2),
+                    'avgValues'=>number_format($paself->AvgValues,2),
+                ];
+            }
+            if($papeers!=null){
+                $i=0;
+                foreach ($papeers as $key => $value) {
+                   if($i==0){
+                        $_valuesPeers1 = [
+                            'by'=>$value->reviewBy->personal->FullName,
+                            'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
+                            'avgValues'=>number_format($value->AvgValues,2),
+                        ];
+                   }else{
+                        $_valuesPeers2 = [
+                            'by'=>$value->reviewBy->personal->FullName,
+                            'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
+                            'avgValues'=>number_format($value->AvgValues,2),
+                        ];
+                   }
+                   $i++;
+                }
+            }
+
+            if($pasuperior!=null){
+                $i=0;
+                foreach ($pasuperior as $key => $value) {
+                   if($i==0){
+                        $_superior1score = [
+                            'by'=>$value->reviewBy->personal->FullName,
+                            'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
+                            'avgValues'=>number_format($value->AvgValues,2),
+                        ];
+                   }else{
+                        $_superior2score = [
+                            'by'=>$value->reviewBy->personal->FullName,
+                            'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
+                            'avgValues'=>number_format($value->AvgValues,2),
+                        ];
+                   }
+                   $i++;
+                }
+            }
+
+            if($pasubordinate!=null){
+                $i=0;
+                foreach ($pasubordinate as $key => $value) {
+                   if($i==0){
+                        $_valuesSubordinate1 = [
+                            'by'=>$value->reviewBy->personal->FullName,
+                            'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
+                            'avgValues'=>number_format($value->AvgValues,2),
+                        ];
+                   }else{
+                        $_valuesSubordinate1 = [
+                            'by'=>$value->reviewBy->personal->FullName,
+                            'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
+                            'avgValues'=>number_format($value->AvgValues,2),
+                        ];
+                   }
+                   $i++;
                 }
             }
         }

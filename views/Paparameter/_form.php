@@ -117,7 +117,7 @@ $urlindex = Url::to(['evaluates']);
                                 ]
                             ])
                 ->inline()
-                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0, 'step'=>0.01])
                 ->label("Skor Kinerja Karayawan");
             ?>
         </div>
@@ -178,7 +178,7 @@ $urlindex = Url::to(['evaluates']);
                                 ]
                             ])
                 ->inline()
-                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0, 'step'=>0.1])
                 ->label('AGILE : Kita gercep (gerak cepat), dengan menerapkan organisasi yang ramping, 
                             siklus belajar cepat, di lingkungan yang berorientasikan data. ')
             ?>
@@ -224,7 +224,7 @@ $urlindex = Url::to(['evaluates']);
                                 ]
                             ])
                 ->inline()
-                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0, 'step'=>0.1])
                 ->label('IMPACT: Kita mengembangkan kemampuan untuk bisa memberdayakan orang lain - termasuk anggota tim dan pelanggan, 
                         sehingga menciptakan dampak positif sebanyak mungkin bagi masyarakat.')
             ?>
@@ -269,7 +269,7 @@ $urlindex = Url::to(['evaluates']);
                                 ]
                             ])
                 ->inline()
-                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0, 'step'=>0.1])
                 ->label('User-driven Performance Excellence : Pelanggan selalu di hati kita. 
                         Kemajuan mereka adalah kemajuan kita juga. Kita membantu pelanggan meraih hasil terbaik mereka dengan mengerahkan 
                         kemampuan terbaik dan kinerja yang unggul.')
@@ -315,7 +315,7 @@ $urlindex = Url::to(['evaluates']);
                                 ]
                             ])
                 ->inline()
-                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0, 'step'=>0.1])
                 ->label('Entrepreneurial : Kita memastikan pertumbuhan perusahaan dimotori oleh semangat bereksplorasi dan mentalitas kewirausahaan. 
                         Selalu ada ruang untuk bermimpi, bereksperimen dengan berani, dan membina rasa suka cita pada reka-cipta.')
             ?>
@@ -360,7 +360,7 @@ $urlindex = Url::to(['evaluates']);
                                 ]
                             ])
                 ->inline()
-                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0.0001, 'step'=>0.0001])
+                ->textInput(['placeholder'=>'Masukkan Nilai', 'type'=>'number', 'max'=>5, 'min'=>0, 'step'=>0.1])
                 ->label('Open Innovation : Kita berinovasi melalui kreatifitas yang dirangkul dalam sikap yang serba terbuka; 
                         keterbukaan pola pikir, terbuka dalam menerima tanggapan, dan membuat lingkungan kerja yang
                          membudayakan kelugasan berbicara.')
