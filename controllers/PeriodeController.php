@@ -488,7 +488,12 @@ class PeriodeController extends Controller
                 $model->PeersID1 = $_peers1[$i]==0?null:$_peers1[$i];
                 $model->PeersID2 = $_peers2[$i]==0?null:$_peers2[$i];
                 $model->SuperiorID1 = $_superior1[$i]==0?null:$_superior1[$i];
-                $model->SuperiorID2 = $_superior2[$i]==0?null:$_superior2[$i];
+                // $model->SuperiorID2 = $_superior2[$i]==0?null:$_superior2[$i];
+                if(!isset($_superior2[$i]) || $_superior2[$i]==0){
+                    $model->SuperiorID2 = null;
+                }else{
+                    $model->SuperiorID2=$_superior2[$i];
+                }
                 $model->SubordinateID1 = $_subordinate1[$i]==0?null:$_subordinate1[$i];
                 $model->SubordinateID2 = $_subordinate2[$i]==0?null:$_subordinate2[$i];
                 $model->PeriodeID = $id;
