@@ -59,22 +59,22 @@ class PaparameterController extends Controller
                         ->andWhere(['performanceappraisal.PeriodeID'=>$id])
                         ->andWhere(['performanceappraisal.Status'=>'1'])
                         ->one();
-            
             if($employee!=null){
                 $_tempEmployee['name'] = $employee->employee->personal->FullName;
                 $_tempEmployee['by'] = $by;
                 $_tempEmployee['id'] = $employee->PerformanceAppraisalID;
                 $_tempEmployee['type'] = 'self';
                 $_tempEmployee['status'] = $this->isEvaluate($employee->PerformanceAppraisalID, $employee->EmployeeID, 'self');
-                
-                $peers = Performanceappraisal::find()
-                                ->joinWith('periode')
-                                ->where(['performanceappraisal.PeersID1'=>$personalinfo->employments->EmployeeID])
-                                ->orWhere(['performanceappraisal.PeersID2'=>$personalinfo->employments->EmployeeID])
-                                ->andWhere(['periode.status'=>1])
-                                ->andWhere(['performanceappraisal.PeriodeID'=>$id])
-                                ->andWhere(['performanceappraisal.Status'=>'1'])
-                                ->all();
+            }
+            $peers = Performanceappraisal::find()
+                    ->joinWith('periode')
+                    ->where(['performanceappraisal.PeersID1'=>$personalinfo->employments->EmployeeID])
+                    ->orWhere(['performanceappraisal.PeersID2'=>$personalinfo->employments->EmployeeID])
+                    ->andWhere(['periode.status'=>1])
+                    ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                    ->andWhere(['performanceappraisal.Status'=>'1'])
+                    ->all();
+            if($peers!=null){
                 $i=1;
                 foreach ($peers as $key => $value) {
                     $_tempPeers[$i]['name'] = $value->employee->personal->FullName;
@@ -84,15 +84,16 @@ class PaparameterController extends Controller
                     $_tempPeers[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'peers-'.$i);
                     $i++;
                 }
-
-                $superior = Performanceappraisal::find()
-                                ->joinWith('periode')
-                                ->where(['performanceappraisal.SuperiorID1'=>$personalinfo->employments->EmployeeID])
-                                ->orWhere(['performanceappraisal.SuperiorID2'=>$personalinfo->employments->EmployeeID])//or superior2
-                                ->andWhere(['periode.status'=>1])
-                                ->andWhere(['performanceappraisal.PeriodeID'=>$id])
-                                ->andWhere(['performanceappraisal.Status'=>'1'])
-                                ->all();
+            }
+            $superior = Performanceappraisal::find()
+                            ->joinWith('periode')
+                            ->where(['performanceappraisal.SuperiorID1'=>$personalinfo->employments->EmployeeID])
+                            ->orWhere(['performanceappraisal.SuperiorID2'=>$personalinfo->employments->EmployeeID])//or superior2
+                            ->andWhere(['periode.status'=>1])
+                            ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                            ->andWhere(['performanceappraisal.Status'=>'1'])
+                            ->all();
+            if($superior!=null){
                 $i=1;
                 foreach ($superior as $key => $value) {
                     $_tempSuperior[$i]['name'] = $value->employee->personal->FullName;
@@ -102,15 +103,17 @@ class PaparameterController extends Controller
                     $_tempSuperior[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'superior-'.$i);
                     $i++;
                 }
-                //check for superior2
-                $subordinate = Performanceappraisal::find()
-                                ->joinWith('periode')
-                                ->where(['performanceappraisal.SubordinateID1'=>$personalinfo->employments->EmployeeID])
-                                ->orWhere(['performanceappraisal.SubordinateID2'=>$personalinfo->employments->EmployeeID])
-                                ->andWhere(['periode.status'=>1])
-                                ->andWhere(['performanceappraisal.PeriodeID'=>$id])
-                                ->andWhere(['performanceappraisal.Status'=>'1'])
-                                ->all();
+            }
+    
+            $subordinate = Performanceappraisal::find()
+                            ->joinWith('periode')
+                            ->where(['performanceappraisal.SubordinateID1'=>$personalinfo->employments->EmployeeID])
+                            ->orWhere(['performanceappraisal.SubordinateID2'=>$personalinfo->employments->EmployeeID])
+                            ->andWhere(['periode.status'=>1])
+                            ->andWhere(['performanceappraisal.PeriodeID'=>$id])
+                            ->andWhere(['performanceappraisal.Status'=>'1'])
+                            ->all();
+            if($subordinate!=null){
                 $i=1;
                 foreach ($subordinate as $key => $value) {
                     $_tempSubordinate[$i]['name'] = $value->employee->personal->FullName;
@@ -122,6 +125,12 @@ class PaparameterController extends Controller
                 }
             }
         }
+        // echo "<pre>";
+        // print_r($_tempEmployee);
+        // print_r($_tempPeers);
+        // print_r($_tempSubordinate);
+        // print_r($_tempSuperior);
+        // die;
         return $this->render('index', [
             'employee'=>$_tempEmployee,
             'peers'=>$_tempPeers,
@@ -182,7 +191,7 @@ class PaparameterController extends Controller
         //check kedaluarsa
         if(date('Y-m-d')>$prfmaprsl->periode->LastModified){
             if(!Yii::$app->session->has('outofdate')){
-                Yii::$app->session->setFlash('outofdate', "Batas penilaian telah berakhir!");
+                Yii::$app->session->setFlash('outofdate', "Batas penilaian telah berakhir!", null);
                 return $this->redirect(['evaluates']);
             }
         }
@@ -211,11 +220,11 @@ class PaparameterController extends Controller
             $calculate = $this->doCalculation($id);
             if($calculate){
                 if(!Yii::$app->session->has('success')){
-                    Yii::$app->session->setFlash('success', "Anda berhasil melakukan penilaian. Terima Kasih.");
+                    Yii::$app->session->setFlash('success', "Anda berhasil melakukan penilaian. Terima Kasih.",null);
                 }
             }else{
                 if(!Yii::$app->session->has('error')){
-                    Yii::$app->session->setFlash('error', "Terdapat Kesalahan.");
+                    Yii::$app->session->setFlash('error', "Terdapat Kesalahan.",null);
                 }
             }
             return $this->redirect(['index','id'=>$prfmaprsl->PeriodeID]);

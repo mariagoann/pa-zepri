@@ -13,17 +13,18 @@ $this->params['breadcrumbs'][] = ['label' => 'Daftar Periode Penilaian', 'url' =
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="generate-index">
-<?php if (Yii::$app->session->hasFlash('success')): ?>
-    <div class="alert alert-success alert-dismissable">
-         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-         <?= Yii::$app->session->getFlash('success') ?>
-    </div>
-<?php endif; ?>
 
 <?php if (Yii::$app->session->hasFlash('successedit')): ?>
     <div class="alert alert-success alert-dismissable">
          <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
          <?= Yii::$app->session->getFlash('successedit') ?>
+    </div>
+<?php endif; ?>
+
+<?php if (Yii::$app->session->hasFlash('successnilai')): ?>
+    <div class="alert alert-success alert-dismissable">
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+         <?= Yii::$app->session->getFlash('successnilai') ?>
     </div>
 <?php endif; ?>
 
@@ -47,10 +48,11 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-    if($employee!=null){
+    if($employee!=null || $peers!=null || $superior!=null || $subordinate!=null){
 ?>
     <div class='row'>
         <div class ='col-md-6'>
+            <?php if($employee!=null){?>
             <table class='table table-bordered table-striped'>
                 <tbody>
                     <tr>
@@ -71,6 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </tr>
                 </tbody>
             </table>
+            <?php } ?>
         </div>
     </div>
 
