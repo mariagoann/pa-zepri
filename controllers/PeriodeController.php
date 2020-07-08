@@ -406,25 +406,28 @@ class PeriodeController extends Controller
     }
 
     private function getPeers($end,$sqid,$jpid, $orid, $except){
-        $_squad = Employment::find()
+        $_squad = [];
+        $_kond1 = Employment::find()
                             ->where(['SquadID'=>$sqid])
                             ->andWhere(['JobPositionID'=>$jpid])
                             ->andWhere(['<>','EmployeeID',$except])
-                            ->andWhere(['<=', 'JoinDate', $end])
-                            ->all();
-        if($_squad==null){
-            $_squad = Employment::find()
+                            ->andWhere(['<=', 'JoinDate', $end]);
+        $_squad = $_kond1->all();
+        if($_kond1->count()==0 || $_kond1->count()==1){
+            $_kond2 = Employment::find()
                         ->where(['OrganizationID'=>$orid])
                         ->andWhere(['JobPositionID'=>$jpid])
                         ->andWhere(['<>','EmployeeID',$except])
-                        ->andWhere(['<=', 'JoinDate', $end])
-                        ->all();
-            if($_squad==null){
-                $_squad = Employment::find()
+                        ->andWhere(['<=', 'JoinDate', $end]);
+            $_squad = $_kond2->all();
+            if($_kond2->count()==0 || $_kond2->count()==1){
+                $_kond3 = Employment::find()
                         ->where(['JobPositionID'=>$jpid])
                         ->andWhere(['<>','EmployeeID',$except])
-                        ->andWhere(['<=', 'JoinDate', $end])
-                        ->all();
+                        ->andWhere(['<=', 'JoinDate', $end]);
+                if($_kond3->count() > 1){
+                    $_squad = $_kond3->all();
+                }
             }
         }
         shuffle($_squad);
