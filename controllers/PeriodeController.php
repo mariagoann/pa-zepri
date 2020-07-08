@@ -339,12 +339,16 @@ class PeriodeController extends Controller
             foreach ($_employee as $key => $_value) {
                $__peers = null;
                $__subordinate = null;
+               $_squad = null;
                $vpeers1=null;
                $vpeers2=null;
                $vsubodinate1 = null;
                $vsubordinate2=null;
-               $_squad = $this->getPeers($_periode->End,$_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
-               $_subordinate = $this->getSubordinate($_periode->End,$_value->EmployeeID);
+               if($_value->jobPosition->Level>3){ // only for jobposition > 3 (head)
+                    $_squad = $this->getPeers($_periode->End,$_value->SquadID, $_value->JobPositionID, $_value->OrganizationID, $_value->EmployeeID);
+               }
+
+                $_subordinate = $this->getSubordinate($_periode->End,$_value->EmployeeID);
                if($_squad!=null){
                  $j=0;
                  foreach ($_squad as $key => $value) {
@@ -408,13 +412,20 @@ class PeriodeController extends Controller
                             ->andWhere(['<>','EmployeeID',$except])
                             ->andWhere(['<=', 'JoinDate', $end])
                             ->all();
-        if($sqid==null){
+        if($_squad==null){
             $_squad = Employment::find()
                         ->where(['OrganizationID'=>$orid])
                         ->andWhere(['JobPositionID'=>$jpid])
                         ->andWhere(['<>','EmployeeID',$except])
                         ->andWhere(['<=', 'JoinDate', $end])
                         ->all();
+            if($_squad==null){
+                $_squad = Employment::find()
+                        ->where(['JobPositionID'=>$jpid])
+                        ->andWhere(['<>','EmployeeID',$except])
+                        ->andWhere(['<=', 'JoinDate', $end])
+                        ->all();
+            }
         }
         shuffle($_squad);
         return $_squad;

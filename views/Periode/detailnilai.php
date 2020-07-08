@@ -136,14 +136,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         echo "</tr>";
 
                         echo "<tr rowspan=4>";
-                        if($role=='admin' && $model->TrackRecord==null){
-                            echo "<td colspan=8> 
-                                    <input type='text' class='form-control' id='track' name='track'> 
+                        if($role=='admin'){
+                            echo "<td colspan=7> 
+                                    <textarea class='form-control' id='track' rows='4' name='track'>".$model->TrackRecord."</textarea>
+                                </td>
+                                <td> <button type='button' class='btn btn-success' id='simpan'><span class='fa fa-check'></span></button>
                                 </td>";
                         }else{
                             echo "<td colspan=8>".$model->TrackRecord."</td>";
                         }
-                        echo "<td colspan=2><b>".number_format($model->TotalScore,2)."</b></td>";
+                        echo "<td colspan=2><b><p style='font-size:35px'>".number_format($model->TotalScore,2)."</p></b></td>";
                         echo "</tr>";
                     ?>
                 </tbody>
@@ -164,25 +166,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $script = <<< JS
-$("#track").keyup(function(event) {
-    if (event.keyCode === 13) {
-        var url = '$urlsave';
-        var data = {track:this.value};
-        $.ajax({
-            type: 'post',
-            url: url,
-            data: data, 
-            success: function(response)
-            {
-                var response = JSON.parse(response);
-                alert(response.message);
-                window.location.href = response.url;
-            },
-            error: function(){
-                alert('Something went wrong');
-            }
-        });
-    }
+$("#simpan").click(function(event) {
+    var url = '$urlsave';
+    var _data = document.getElementById("track").value;
+    var data = {track:_data};
+    $.ajax({
+        type: 'post',
+        url: url,
+        data: data, 
+        success: function(response)
+        {
+            var response = JSON.parse(response);
+            alert(response.message);
+            window.location.href = response.url;
+        },
+        error: function(){
+            alert('Something went wrong');
+        }
+    });
 });
 JS;
 $this->registerJs($script);

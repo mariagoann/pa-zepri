@@ -53,7 +53,7 @@ class Paparameter extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['EmployeePerformanceScore', 'TeamImprovement', 'Aspirasi', 'AGILE', 'PositifSelfAgile', 'NegativeSelfAgile', 'IMPACT', 'PositiveSelfImpact', 'NegativeSelfImpact', 'UDPE', 'PositiveSelfUDPE', 'NegativeSelfUDPE', 'Entrepreneurial', 'PositiveSelfEntrepreneurial', 'NegativeSelfEntrepreneurial', 'OpenInnovation', 'PositiveSelfInnovation', 'NegativeSelfInnovation', 'PerformanceAppraisalID', 'ReviewByID', 'Status'], 'required'],
+            [['EmployeePerformanceScore', 'TeamImprovement', 'Aspirasi', 'AGILE', 'PositifSelfAgile', 'NegativeSelfAgile', 'IMPACT', 'PositiveSelfImpact', 'NegativeSelfImpact', 'UDPE', 'PositiveSelfUDPE', 'NegativeSelfUDPE', 'Entrepreneurial', 'PositiveSelfEntrepreneurial', 'NegativeSelfEntrepreneurial', 'OpenInnovation', 'PositiveSelfInnovation', 'NegativeSelfInnovation', 'PerformanceAppraisalID', 'ReviewByID', 'Status','PositiveContribution','SelfImprovement'], 'required'],
             [['EmployeePerformanceScore', 'AGILE', 'IMPACT', 'UDPE', 'Entrepreneurial', 'OpenInnovation', 'AvgValues'], 'number'],
             [['PerformanceAppraisalID', 'ReviewByID'], 'integer'],
             [['PositiveContribution', 'SelfImprovement', 'TeamImprovement', 'Aspirasi', 'PositifSelfAgile', 'NegativeSelfAgile', 'PositiveSelfImpact', 'NegativeSelfImpact', 'PositiveSelfUDPE', 'NegativeSelfUDPE', 'PositiveSelfEntrepreneurial', 'NegativeSelfEntrepreneurial', 'PositiveSelfInnovation', 'NegativeSelfInnovation'], 'string', 'max' => 250],

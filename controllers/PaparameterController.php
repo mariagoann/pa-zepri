@@ -219,8 +219,8 @@ class PaparameterController extends Controller
             //doCalculation
             $calculate = $this->doCalculation($id);
             if($calculate){
-                if(!Yii::$app->session->has('success')){
-                    Yii::$app->session->setFlash('success', "Anda berhasil melakukan penilaian. Terima Kasih.",null);
+                if(!Yii::$app->session->has('successnilai')){
+                    Yii::$app->session->setFlash('successnilai', "Anda berhasil melakukan penilaian. Terima Kasih.",null);
                 }
             }else{
                 if(!Yii::$app->session->has('error')){
