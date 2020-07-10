@@ -126,7 +126,7 @@ Yii::$app->formatter->format($model->periode->End, 'date' );
 
                         echo "<tr rowspan=4>";
                         echo "<td colspan=8>".$model->TrackRecord."</td>";
-                        echo "<td colspan=2><p style='font-size:35px'><b>".number_format($model->TotalScore,2)."</b></p></td>";
+                        echo "<td colspan=2><p style='font-size:35px'><b>".number_format($model->TotalScore,4)."</b></p></td>";
                         echo "</tr>";
                     ?>
                 </tbody>

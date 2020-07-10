@@ -48,60 +48,30 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <?php
-    if($employee!=null || $peers!=null || $superior!=null || $subordinate!=null){
+    if($all!=null && isset($all)){
 ?>
-    <div class='row'>
-        <div class ='col-md-6'>
-            <?php if($employee!=null){?>
-            <table class='table table-bordered table-striped'>
-                <tbody>
-                    <tr>
-                        <td><b>Self Performance Appraisal</b></td>
-                        <td><?php echo $employee['name'];?></td>
-                        <td><?php 
-                                if(!$employee['status']){
-                                    echo Html::a('Nilai', ['nilai', 'by'=>$employee['by'],
-                                                                    'id'=>$employee['id'],
-                                                                    'type'=>$employee['type']]);
-                                }else{
-                                    echo Html::a('Ubah', ['ubahnilai', 'by'=>$employee['by'],
-                                                                        'id'=>$employee['id'],
-                                                                        'type'=>$employee['type']]);
-                                }
-                          ?>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <?php } ?>
-        </div>
-    </div>
 
     <div class='row'>
         <div class ='col-md-6'>
             <table class='table table-bordered table-striped'>
                 <tbody>
                     <?php
-                        if($peers!=null){
-                            $i=1;
-                            foreach ($peers as $key => $value) {
-                                echo "<tr>";
-                                echo "<td><b>Peers Performance Appraisal ".$i."<b></td>";
-                                echo "<td>".$value['name']."</td>";
-                                if(!$value['status']){
-                                    echo "<td>".Html::a('Nilai', ['nilai', 'by'=>$value['by'],
+                        foreach ($all as $key => $value) {
+                            echo "<tr>";
+                            echo "<td><b>".$value['label']."</b></td>";
+                            echo "<td>".$value['name']."</td>";
+                            if(!$value['status']){
+                                echo "<td>".Html::a('Nilai', ['nilai', 'by'=>$value['by'],
+                                                                        'id'=>$value['id'],
+                                                                        'type'=>$value['type']                        
+                                                                        ])."</td>";
+                            }else{
+                                echo "<td>".Html::a('Ubah', ['ubahnilai', 'by'=>$value['by'],
                                                                             'id'=>$value['id'],
                                                                             'type'=>$value['type']                        
-                                                                            ])."</td>";
-                                }else{
-                                    echo "<td>".Html::a('Ubah', ['ubahnilai', 'by'=>$value['by'],
-                                                                                'id'=>$value['id'],
-                                                                                'type'=>$value['type']                        
-                                    ])."</td>";
-                                }
-                                echo "</tr>";
-                                $i++;
+                                ])."</td>";
                             }
+                            echo "</tr>";
                         }
                     ?>
                 </tbody>
@@ -109,69 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <div class='row'>
-        <div class ='col-md-6'>
-            <table class='table table-bordered table-striped'>
-                <tbody>
-                    <?php
-                        if($superior!=null){
-                            $i=1;
-                            foreach ($superior as $key => $value) {
-                                echo "<tr>";
-                                echo "<td><b>Superior to Subordinate ".$i."<b></td>";
-                                echo "<td>".$value['name']."</td>";
-                                if(!$value['status']){
-                                    echo "<td>".Html::a('Nilai', ['nilai', 'by'=>$value['by'],
-                                                                            'id'=>$value['id'],
-                                                                            'type'=>$value['type']                        
-                                                                            ])."</td>";
-                                }else{
-                                    echo "<td>".Html::a('Ubah', ['ubahnilai', 'by'=>$value['by'],
-                                                                                'id'=>$value['id'],
-                                                                                'type'=>$value['type']                        
-                                    ])."</td>";
-                                }
-                                echo "</tr>";
-                                $i++;
-                            }
-                        }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class='row'>
-        <div class ='col-md-6'>
-            <table class='table table-bordered table-striped'>
-                <tbody>
-                    <?php
-                        if($subordinate!=null){
-                            $i=1;
-                            foreach ($subordinate as $key => $value) {
-                                echo "<tr>";
-                                echo "<td><b>Subordinate to Superior".$i."<b></td>";
-                                echo "<td>".$value['name']."</td>";
-                                if(!$value['status']){
-                                    echo "<td>".Html::a('Nilai', ['nilai', 'by'=>$value['by'],
-                                                                            'id'=>$value['id'],
-                                                                            'type'=>$value['type']                        
-                                                                            ])."</td>";
-                                }else{
-                                    echo "<td>".Html::a('Ubah', ['ubahnilai', 'by'=>$value['by'],
-                                                                                'id'=>$value['id'],
-                                                                                'type'=>$value['type']                        
-                                    ])."</td>";
-                                }
-                                echo "</tr>";
-                                $i++;
-                            }
-                        }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
 <?php
     }else{
 ?>

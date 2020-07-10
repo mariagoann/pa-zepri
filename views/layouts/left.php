@@ -93,7 +93,8 @@
                         'label' => 'Penilaian Kinerja',
                         'icon' => 'share',
                         'url' => ['/paparameter/evaluates'],
-                        'visible' => !Yii::$app->user->isGuest
+                        // 'visible' => !Yii::$app->user->isGuest
+                        'visible' => !$flag,
                     ],
                 ],
             ]

@@ -44,6 +44,7 @@ class PaparameterController extends Controller
         $_tempPeers = null;
         $_tempSuperior = null;
         $_tempSubordinate = null;
+        $_all=[];
         $personalinfo = Personalinfo::find()
                                 ->where(['UserID'=>Yii::$app->user->id])
                                 ->one();
@@ -64,7 +65,9 @@ class PaparameterController extends Controller
                 $_tempEmployee['by'] = $by;
                 $_tempEmployee['id'] = $employee->PerformanceAppraisalID;
                 $_tempEmployee['type'] = 'self';
+                $_tempEmployee['label'] = 'Self Performance Appraisal';
                 $_tempEmployee['status'] = $this->isEvaluate($employee->PerformanceAppraisalID, $employee->EmployeeID, 'self');
+                array_push($_all,$_tempEmployee);
             }
             $peers = Performanceappraisal::find()
                     ->joinWith('periode')
@@ -77,11 +80,13 @@ class PaparameterController extends Controller
             if($peers!=null){
                 $i=1;
                 foreach ($peers as $key => $value) {
-                    $_tempPeers[$i]['name'] = $value->employee->personal->FullName;
-                    $_tempPeers[$i]['by'] = $by;
-                    $_tempPeers[$i]['id'] = $value->PerformanceAppraisalID;
-                    $_tempPeers[$i]['type'] = 'peers-'.$i;
-                    $_tempPeers[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'peers-'.$i);
+                    $_tempPeers['name'] = $value->employee->personal->FullName;
+                    $_tempPeers['by'] = $by;
+                    $_tempPeers['id'] = $value->PerformanceAppraisalID;
+                    $_tempPeers['type'] = 'peers-'.$i;
+                    $_tempPeers['label'] = 'Peers Performance Appraisal '.$i;
+                    $_tempPeers['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'peers-'.$i);
+                    array_push($_all,$_tempPeers);
                     $i++;
                 }
             }
@@ -96,11 +101,13 @@ class PaparameterController extends Controller
             if($superior!=null){
                 $i=1;
                 foreach ($superior as $key => $value) {
-                    $_tempSuperior[$i]['name'] = $value->employee->personal->FullName;
-                    $_tempSuperior[$i]['by'] = $by;
-                    $_tempSuperior[$i]['id'] = $value->PerformanceAppraisalID;
-                    $_tempSuperior[$i]['type'] = 'superior-'.$i;
-                    $_tempSuperior[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'superior-'.$i);
+                    $_tempSuperior['name'] = $value->employee->personal->FullName;
+                    $_tempSuperior['by'] = $by;
+                    $_tempSuperior['id'] = $value->PerformanceAppraisalID;
+                    $_tempSuperior['type'] = 'superior-'.$i;
+                    $_tempSuperior['label'] = 'Superior to Subordinate '.$i;
+                    $_tempSuperior['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'superior-'.$i);
+                    array_push($_all,$_tempSuperior);
                     $i++;
                 }
             }
@@ -116,26 +123,23 @@ class PaparameterController extends Controller
             if($subordinate!=null){
                 $i=1;
                 foreach ($subordinate as $key => $value) {
-                    $_tempSubordinate[$i]['name'] = $value->employee->personal->FullName;
-                    $_tempSubordinate[$i]['by'] = $by;
-                    $_tempSubordinate[$i]['id'] = $value->PerformanceAppraisalID;
-                    $_tempSubordinate[$i]['type'] = 'subordinate-'.$i;
-                    $_tempSubordinate[$i]['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'subordinate-'.$i);
+                    $_tempSubordinate['name'] = $value->employee->personal->FullName;
+                    $_tempSubordinate['by'] = $by;
+                    $_tempSubordinate['id'] = $value->PerformanceAppraisalID;
+                    $_tempSubordinate['type'] = 'subordinate-'.$i;
+                    $_tempSubordinate['label'] = 'Subordinate to Superior '.$i;
+                    $_tempSubordinate['status'] = $this->isEvaluate($value->PerformanceAppraisalID, $by, 'subordinate-'.$i);
+                    array_push($_all,$_tempSubordinate);
                     $i++;
                 }
             }
         }
-        // echo "<pre>";
-        // print_r($_tempEmployee);
-        // print_r($_tempPeers);
-        // print_r($_tempSubordinate);
-        // print_r($_tempSuperior);
-        // die;
         return $this->render('index', [
-            'employee'=>$_tempEmployee,
-            'peers'=>$_tempPeers,
-            'superior'=>$_tempSuperior,
-            'subordinate'=>$_tempSubordinate,
+            // 'employee'=>$_tempEmployee,
+            // 'peers'=>$_tempPeers,
+            // 'superior'=>$_tempSuperior,
+            // 'subordinate'=>$_tempSubordinate,
+            'all'=>$_all,
             'periode'=>$periode,
         ]);
     }
@@ -322,7 +326,8 @@ class PaparameterController extends Controller
                     ];
                     $i++;
                 }elseif(strpos($value->TypePA, 'superior')!==false){
-                    $_countSubs = $this->countSubsOnPeriode($value->performanceAppraisal->EmployeeID);
+                    // $_countSubs = $this->countSubsOnPeriode($value->performanceAppraisal->EmployeeID);
+                    $_countSubs = $this->countSubsOnPeriode($idpa);
                     $_avgValues = 0;
                     if(strtolower($_positionReviwee)=='head' || $_countSubs==0){
                         $_avgValues = floatval((75/100 * $value->AvgValues));

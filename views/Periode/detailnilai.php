@@ -145,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         }else{
                             echo "<td colspan=8>".$model->TrackRecord."</td>";
                         }
-                        echo "<td colspan=2><b><p style='font-size:35px'>".number_format($model->TotalScore,2)."</p></b></td>";
+                        echo "<td colspan=2><b><p style='font-size:35px'>".number_format($model->TotalScore,4)."</p></b></td>";
                         echo "</tr>";
                     ?>
                 </tbody>

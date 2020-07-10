@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute'=>'Nilai Akhir',
-                    'format'=>['decimal',2],
+                    'format'=>['decimal',4],
                     'value'=>'TotalScore'
                 ],
 
