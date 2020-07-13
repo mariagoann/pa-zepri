@@ -7,8 +7,10 @@ use yii\bootstrap\Tabs;
 /* @var $model app\models\Personalinfo */
 
 $this->title = 'Update Karyawan: ' . $model->FullName;
-$this->params['breadcrumbs'][] = ['label' => 'Karyawan', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->FullName, 'url' => ['view', 'id' => $model->PersonalID]];
+if(!$readonly){
+    $this->params['breadcrumbs'][] = ['label' => 'Karyawan', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = ['label' => $model->FullName, 'url' => ['view', 'id' => $model->PersonalID]];
+}
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="personalinfo-update">
@@ -24,6 +26,7 @@ $this->params['breadcrumbs'][] = 'Update';
                         'gender'=>$gender,
                         'religion'=>$religion,
                         'status'=>$status,
+                        'readonly'=>$readonly
                     ]),
                 'options' => ['id' => 'personalinfo'],
                 'active' => true
@@ -40,6 +43,7 @@ $this->params['breadcrumbs'][] = 'Update';
                         'jobtitle'=>$jobtitle,
                         'joblevel'=>$joblevel,
                         'squad'=>$squad,
+                        'readonly'=>$readonly
                     ]),
                 'options' => ['id' => 'datakaryawan'],
                 'active' => false

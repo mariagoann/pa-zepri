@@ -137,19 +137,20 @@ use yii\helpers\Html;
 
                         <!-- Menu Footer-->
                         <li class="user-footer">
-                            <!-- <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
-                            </div> -->
-                            <!-- <div class="pull-right"> -->
-                            <center>
-                            <div class='signout'>
+                            <div class="pull-left">
+                            <?= Html::a(
+                                    'Profile',
+                                    ['/personalinfo/update','id'=>Yii::$app->session->has('personalid')==false?0:Yii::$app->session->get('personalid'),'type'=>'self'],
+                                    ['class' => 'btn btn-default btn-flat']
+                                ) ?>
+                            </div> 
+                             <div class="pull-right">
                                 <?= Html::a(
                                     'Sign out',
                                     ['/site/logout'],
                                     ['data-method' => 'post', 'class' => 'btn btn-default btn-flat']
                                 ) ?>
                             </div>
-                            </center>
                         </li>
                     </ul>
                 </li>

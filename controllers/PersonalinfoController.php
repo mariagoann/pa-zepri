@@ -146,6 +146,7 @@ class PersonalinfoController extends Controller
             'jobtitle'=>$jobtitle,
             'joblevel'=>$joblevel,
             'squad'=>$squad,
+            'readonly'=>false,
         ]);
     }
     /**
@@ -155,8 +156,12 @@ class PersonalinfoController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id,$type=null)
     {
+        if($id==0&&$type=='self'){
+            Yii::$app->session->setFlash('nopersonal', "Anda tidak memiliki data personal!");
+            return $this->redirect(['index']);
+        }
         $model = $this->findModel($id);
         $identity = Identitytype::find()->all();
         $gender = Gender::find()->all();
@@ -202,6 +207,7 @@ class PersonalinfoController extends Controller
             'jobtitle'=>$jobtitle,
             'joblevel'=>$joblevel,
             'squad'=>$squad,
+            'readonly'=>$type!=null?true:false,
         ]);
     }
 

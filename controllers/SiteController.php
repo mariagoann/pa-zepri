@@ -102,6 +102,7 @@ class SiteController extends Controller
                 Yii::$app->session->set('fullname',$personalinfo->FullName);
                 Yii::$app->session->set('isSuperior',$isSuperior);
                 Yii::$app->session->set('employeeid',$employeeid);
+                Yii::$app->session->set('personalid',$personalinfo->PersonalID);
             }
             if($user->role=='admin'){
                 return $this->redirect(['personalinfo/index']);

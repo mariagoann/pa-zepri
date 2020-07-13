@@ -22,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'gender'=>$gender,
                         'religion'=>$religion,
                         'status'=>$status,
+                        'readonly'=>$readonly
                     ]),
                 'options' => ['id' => 'personalinfo'],
                 'active' => true
@@ -38,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'jobtitle'=>$jobtitle,
                         'joblevel'=>$joblevel,
                         'squad'=>$squad,
+                        'readonly'=>$readonly
                     ]),
                 'options' => ['id' => 'datakaryawan'],
                 'active' => false

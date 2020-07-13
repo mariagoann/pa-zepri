@@ -13,6 +13,12 @@ $this->title = 'Daftar Karyawan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="personalinfo-index">
+<?php if (Yii::$app->session->hasFlash('nopersonal')): ?>
+    <div class="alert alert-warning alert-dismissable">
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+         <?= Yii::$app->session->getFlash('nopersonal') ?>
+    </div>
+<?php endif; ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php Pjax::begin(); ?>

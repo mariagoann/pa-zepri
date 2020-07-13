@@ -489,6 +489,32 @@ class PaparameterController extends Controller
     }
 
     /**
+     * {paparemeterid, pacomponentid}
+     */
+    public function actionDetail($id,$idc){
+        $model = $this->findModel($id);
+        if($model!=null){
+            $prfmaprsl = $model->performanceAppraisal;
+            $employee = Employment::find()
+                                ->where(['EmployeeID'=>$prfmaprsl->EmployeeID])
+                                ->one();
+            return $this->render(
+                'detail',[
+                    'model'=>$model,
+                    'idc'=>$idc,
+                    'prfmaprsl'=>$prfmaprsl,
+                    'employee'=>$employee
+                ]
+            );
+        }else{
+            Yii::$app->session->setFlash('detailempty', "Detail parameter tidak ditemukan!");
+            return  $this->redirect(['periode/detail-nilai',
+                'id'=>$idc
+            ]);
+        }
+    }
+
+    /**
      * Finds the Paparameter model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id

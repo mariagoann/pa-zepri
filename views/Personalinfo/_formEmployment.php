@@ -45,7 +45,7 @@ $urlindex = Url::to(['index']);
         }
     ?>
     <?= $form->field($modelEmployment, 'EmployeeNumber', ['horizontalCssClasses' => ['wrapper' => 'col-md-6']])
-            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Nomor Karyawan'])
+            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Nomor Karyawan', 'disabled'=>$readonly])
             ->label('Nomor Karyawan')
     ?>
     <?= $form->field($modelEmployment, 'JoinDate',[
@@ -64,7 +64,7 @@ $urlindex = Url::to(['index']);
                         'changeYear'=>'true',
                         'yearRange'=>"-100:2030",
                     ],
-                'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Join Date']
+                'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Join Date', 'disabled'=>$readonly]
             ])->label('Join Date')
     ?>
 
@@ -73,7 +73,7 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($statusEmployment, 'EmployeeStatusID', 'Name'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($statusEmployment, 'EmployeeStatusID', 'Name'),["prompt"=>"Pilih", 'disabled'=>$readonly])
                 ->label("Status Karyawan") 
     ?>
 
@@ -82,7 +82,7 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($organization, 'OrganizationID', 'OrganizationName'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($organization, 'OrganizationID', 'OrganizationName'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Organization") 
     ?>
     <div class='row'>
@@ -93,13 +93,13 @@ $urlindex = Url::to(['index']);
                             'label'=>'col-md-6'
                             ]
                         ])->dropDownList(
-                                ArrayHelper::map($jobposition, 'JobPositionID', 'JobPositionName'),["prompt"=>"Pilih"])
+                                ArrayHelper::map($jobposition, 'JobPositionID', 'JobPositionName'),["prompt"=>"Pilih",'disabled'=>$readonly])
                         ->label("Job Position") 
             ?>
         </div>
         <div class=col-md-6>
             <?= $form->field($modelEmployment, 'AKA_JobPosition', ['horizontalCssClasses' => ['wrapper' => 'col-md-6']])
-                ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Alias'])
+                ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Alias','disabled'=>$readonly])
                 ->label(false)
             ?>
         </div>
@@ -110,7 +110,7 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($jobtitle, 'JobTitleID', 'JobTitleName'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($jobtitle, 'JobTitleID', 'JobTitleName'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Job Title") 
     ?>
 
@@ -119,7 +119,7 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($joblevel, 'LevelID', 'LevelName'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($joblevel, 'LevelID', 'LevelName'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Job Level") 
     ?>
 
@@ -128,7 +128,7 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-3',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($atasan, 'EmployeeID', 'personal.FullName'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($atasan, 'EmployeeID', 'personal.FullName'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Atasan Langsung") 
     ?>
 
@@ -137,21 +137,39 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($squad, 'SquadID', 'SquadName'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($squad, 'SquadID', 'SquadName'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Squad") 
     ?>
     
 
     <div class="form-group">
         <div class="col-md-3"></div>
+        <?php
+            if(!$readonly){
+        ?>
+            <div class="col-md-3">
+                <?= Html::submitButton($modelEmployment->isNewRecord ? 'Tambah' : 'Simpan',
+                    ['class' => $modelEmployment->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                        'id'=>'submitEmployment',
+                    ]
+                ) ?>
+                <button type="button" class="btn btn-danger" id='batal2'>Cancel</button>
+            </div>
+        <?php
+            }else{
+        ?>
         <div class="col-md-3">
             <?= Html::submitButton($modelEmployment->isNewRecord ? 'Tambah' : 'Simpan',
-                 ['class' => $modelEmployment->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
-                    'id'=>'submitEmployment'
-                 ]
+                ['class' => $modelEmployment->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+                    'id'=>'submitEmployment',
+                    'disabled'=>true
+                ]
             ) ?>
-            <button type="button" class="btn btn-danger" id='batal2'>Cancel</button>
+            <button type="button" class="btn btn-danger" id='batal2', disabled='true'>Cancel</button>
         </div>
+        <?php
+            }
+        ?>
     </div>
 
     <?php ActiveForm::end(); ?>

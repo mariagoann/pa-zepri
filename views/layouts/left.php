@@ -80,6 +80,13 @@
                                 'icon' => 'circle-o',
                                 'url' => ['/periode/hasil-penilaian'],
                             ],
+                            [
+                                'label' => 'Menilai Kinerja',
+                                'icon' => 'circle-o',
+                                'url' => ['/paparameter/evaluates'],
+                                // 'visible' => !Yii::$app->user->isGuest
+                                'visible' => !$flag,
+                            ],
                         ],
                         'visible' => !Yii::$app->user->isGuest
                     ],
@@ -88,13 +95,6 @@
                         'icon' => 'share',
                         'url' => ['/periode'],
                         'visible' => $flag,
-                    ],
-                    [
-                        'label' => 'Penilaian Kinerja',
-                        'icon' => 'share',
-                        'url' => ['/paparameter/evaluates'],
-                        // 'visible' => !Yii::$app->user->isGuest
-                        'visible' => !$flag,
                     ],
                 ],
             ]

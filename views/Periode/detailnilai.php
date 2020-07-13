@@ -104,16 +104,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php
                         if(($role=='admin'||$isSuperior) && !$flag){
                             echo "<tr>";
-                            echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
-                            echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
-                            echo $superior2!=null?"<td>".$superior2['by']."</td>":"<td>-</td>";
-                            echo $self!=null?"<td>".$self['by']."</td>":"<td>-</td>";
-                            echo $peers1!=null?"<td>".$peers1['by']."</td>":"<td>-</td>";
-                            echo $peers2!=null?"<td>".$peers2['by']."</td>":"<td>-</td>";
-                            echo $superior1!=null?"<td>".$superior1['by']."</td>":"<td>-</td>";
-                            echo $superior2!=null?"<td>".$superior2['by']."</td>":"<td>-</td>";
-                            echo $subordinate1!=null?"<td>".$subordinate1['by']."</td>":"<td>-</td>";
-                            echo $subordinate2!=null?"<td>".$subordinate2['by']."</td>":"<td>-</td>";
+                            echo $self!=null?"<td>".Html::a(
+                                $self['by'],
+                                ['/paparameter/detail','id'=>$self['id'],'idc'=>$self['idc']])."</td>":"<td>-</td>";
+                            echo $superior1!=null?"<td>".Html::a(
+                                $superior1['by'],
+                                ['/paparameter/detail','id'=>$superior1['id'],'idc'=>$superior1['idc']])."</td>":"<td>-</td>";
+                            echo $superior2!=null?"<td>".Html::a(
+                                $superior2['by'],
+                                ['/paparameter/detail','id'=>$superior2['id'],'idc'=>$superior2['idc']])."</td>":"<td>-</td>";
+                            echo $self!=null?"<td>".Html::a(
+                                $self['by'],
+                                ['/paparameter/detail','id'=>$self['id'],'idc'=>$self['idc']])."</td>":"<td>-</td>";
+                            echo $peers1!=null?"<td>".Html::a(
+                                $peers1['by'],
+                                ['/paparameter/detail','id'=>$peers1['id'],'idc'=>$peers1['idc']])."</td>":"<td>-</td>";
+                            echo $peers2!=null?"<td>".Html::a(
+                                $peers2['by'],
+                                ['/paparameter/detail','id'=>$peers2['id'],'idc'=>$peers2['idc']])."</td>":"<td>-</td>";
+                            echo $superior1!=null?"<td>".Html::a(
+                                $superior1['by'],
+                                ['/paparameter/detail','id'=>$superior1['id'],'idc'=>$superior1['idc']])."</td>":"<td>-</td>";
+                            echo $superior2!=null?"<td>".Html::a(
+                                $superior2['by'],
+                                ['/paparameter/detail','id'=>$superior2['id'],'idc'=>$superior2['idc']])."</td>":"<td>-</td>";
+                            echo $subordinate1!=null?"<td>".Html::a(
+                                $subordinate1['by'],
+                                ['/paparameter/detail','id'=>$subordinate1['id'],'idc'=>$subordinate1['idc']])."</td>":"<td>-</td>";
+                            echo $subordinate2!=null?"<td>".Html::a(
+                                $subordinate2['by'],
+                                ['/paparameter/detail','id'=>$subordinate2['id'],'idc'=>$subordinate2['idc']])."</td>":"<td>-</td>";
                             echo "<tr>";
                         }
 

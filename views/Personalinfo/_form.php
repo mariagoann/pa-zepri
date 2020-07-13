@@ -7,6 +7,10 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 $urlindex = Url::to(['index']);
+if($readonly){
+    $urlindex = Url::to(['/personalinfo/update', 'id'=>Yii::$app->session->get('personalid'),'type'=>'self']);
+}
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Personalinfo */
@@ -45,7 +49,7 @@ $urlindex = Url::to(['index']);
         }
     ?>
     <?= $form->field($model, 'FullName', ['horizontalCssClasses' => ['wrapper' => 'col-md-6']])
-            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Nama Lengkap'])
+            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Nama Lengkap','disabled'=>$readonly])
             ->label('Nama Lengkap')
     ?>
     <div class='row'>
@@ -56,7 +60,7 @@ $urlindex = Url::to(['index']);
                     'label' => 'col-md-6',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($identity, 'IdentityTypeID', 'Name'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($identity, 'IdentityTypeID', 'Name'),["prompt"=>"Pilih", 'disabled'=>$readonly])
                 ->label("Kartu Identitas") 
             ?>
         </div>
@@ -65,7 +69,7 @@ $urlindex = Url::to(['index']);
                     'horizontalCssClasses' => [
                         'wrapper' => 'col-md-12',
                     ]
-                ])->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Nomor Identitas'])
+                ])->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Nomor Identitas','disabled'=>$readonly])
                     ->label(false)
             ?>
         </div>
@@ -86,7 +90,7 @@ $urlindex = Url::to(['index']);
                                 'changeYear'=>'true',
                                 'yearRange'=>"-100:2030",
                             ],
-                        'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Tanggal Berlaku']
+                        'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Tanggal Berlaku','disabled'=>$readonly]
                     ])->label(false)
             ?>
         </div>
@@ -99,7 +103,7 @@ $urlindex = Url::to(['index']);
                         'wrapper' => 'col-md-6',
                         'label' => 'col-md-6',
                     ]
-                ])->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Tempat Lahir'])
+                ])->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Tempat Lahir','disabled'=>$readonly])
                     ->label("Tempat & Tanggal Lahir")
             ?>
         </div>
@@ -120,7 +124,7 @@ $urlindex = Url::to(['index']);
                                 'changeYear'=>'true',
                                 'yearRange'=>"-100:2030",
                             ],
-                        'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Tanggal Lahir']
+                        'options'=>['size'=>27,'changeMonth'=>'true','class'=>'form-control', 'placeholder'=>'Tanggal Lahir','disabled'=>$readonly]
                     ])->label(false)
             ?>
         </div>
@@ -131,32 +135,32 @@ $urlindex = Url::to(['index']);
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($status, 'StatusPersonalID', 'Name'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($status, 'StatusPersonalID', 'Name'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Status") 
     ?>
-    <?=$form->field($model, 'Gender')->label(true)->inline()->radioList($gender)->label("Jenis Kelamin");?>
+    <?=$form->field($model, 'Gender')->label(true)->inline()->radioList($gender,['disabled'=>$readonly])->label("Jenis Kelamin");?>
 
     <?= $form->field($model, 'Religion',[
                 'horizontalCssClasses' => [
                     'wrapper' => 'col-md-2',
                     ]
                 ])->dropDownList(
-                        ArrayHelper::map($religion, 'ReligionID', 'Name'),["prompt"=>"Pilih"])
+                        ArrayHelper::map($religion, 'ReligionID', 'Name'),["prompt"=>"Pilih",'disabled'=>$readonly])
                 ->label("Agama") 
     ?>
 
     <?= $form->field($model, 'PhoneNumber', ['horizontalCssClasses' => ['wrapper' => 'col-md-3']])
-            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan No HP'])
+            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan No HP', 'disabled'=>$readonly])
             ->label('No HP')
     ?>
 
     <?= $form->field($model, 'Address', ['horizontalCssClasses' => ['wrapper' => 'col-md-6']])
-            ->textarea(['rows' => 3]) 
+            ->textarea(['rows' => 3, 'disabled'=>$readonly]) 
             ->label('Alamat')
     ?>
 
     <?= $form->field($model, 'Email', ['horizontalCssClasses' => ['wrapper' => 'col-md-4']])
-            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Email'])
+            ->textInput(['maxlength' => true, 'placeholder'=>'Masukkan Email', 'disabled'=>$readonly])
             ->label('Email')
     ?>
 

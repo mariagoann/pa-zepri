@@ -593,6 +593,8 @@ class PeriodeController extends Controller
                     'by'=>$paself->reviewBy->personal->FullName,
                     'scoreEmployee'=>number_format($paself->EmployeePerformanceScore,2),
                     'avgValues'=>number_format($paself->AvgValues,2),
+                    'id'=>$paself->PAParameterID,
+                    'idc'=>$id
                 ];
             }
             if($papeers!=null){
@@ -603,12 +605,16 @@ class PeriodeController extends Controller
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
+                            'id'=>$value->PAParameterID,
+                            'idc'=>$id
                         ];
                    }else{
                         $_valuesPeers2 = [
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
+                            'id'=>$value->PAParameterID,
+                            'idc'=>$id
                         ];
                    }
                    $i++;
@@ -623,12 +629,16 @@ class PeriodeController extends Controller
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
+                            'id'=>$value->PAParameterID,
+                            'idc'=>$id
                         ];
                    }else{
                         $_superior2score = [
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
+                            'id'=>$value->PAParameterID,
+                            'idc'=>$id
                         ];
                    }
                    $i++;
@@ -643,12 +653,16 @@ class PeriodeController extends Controller
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
+                            'id'=>$value->PAParameterID,
+                            'idc'=>$id
                         ];
                    }else{
                         $_valuesSubordinate1 = [
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
+                            'id'=>$value->PAParameterID,
+                            'idc'=>$id
                         ];
                    }
                    $i++;
