@@ -106,7 +106,9 @@ class SiteController extends Controller
             }
             if($user->role=='admin'){
                 return $this->redirect(['personalinfo/index']);
-            }else{
+            }else if($user->role=='head'){
+                return $this->redirect(['approval/index']);
+            } else{
                 return $this->redirect(['periode/hasil-penilaian']);
             }
             // return $this->goBack();

@@ -21,8 +21,10 @@
 
         <?php
             $flag = false;
+            $flaghead = false;
             if(Yii::$app->session->has('role')){
                 $flag = Yii::$app->session->get('role')=='admin'?true:false;
+                $flaghead = Yii::$app->session->get('role')=='head'?true:false;
             }
             echo dmstr\widgets\Menu::widget(
             [
@@ -88,13 +90,19 @@
                                 'visible' => !$flag,
                             ],
                         ],
-                        'visible' => !Yii::$app->user->isGuest
+                        'visible' => !$flaghead
                     ],
                     [
                         'label' => 'Karyawan Penilai',
                         'icon' => 'share',
                         'url' => ['/periode'],
                         'visible' => $flag,
+                    ],
+                    [
+                        'label' => 'Approval Karyawan Penilai',
+                        'icon' => 'share',
+                        'url' => ['/approval'],
+                        'visible' => $flaghead,
                     ],
                 ],
             ]

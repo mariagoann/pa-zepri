@@ -17,6 +17,7 @@ use app\models\Paparameter;
 use yii\helpers\Url;
 use Mpdf\Mpdf;
 use app\models\Notif;
+use app\models\User;
 
 /**
  * PeriodeController implements the CRUD actions for Periode model.
@@ -93,17 +94,12 @@ class PeriodeController extends Controller
     }
 
     public function actionKirim($id){
-        $update = Performanceappraisal::updateAll(['Status' => '1'], ['=','PeriodeID', $id]);
-        // $allpa = Performanceappraisal::find()->where(['PeriodeID'=>$id])->all();
-        // if($allpa!=null){
-        //     foreach ($allpa as $key=>$value) {
-        //         $this->notif($value);
-        //     }
-        // }
-        if($update){
+        // $update = Performanceappraisal::updateAll(['Status' => '1'], ['=','PeriodeID', $id]);
+        if($_POST){
+            $this->notifAdmin($id);
             echo json_encode([
                 'status'=>1,
-                'message'=>"All data have been activated successfully.",
+                'message'=>"Review request has been send successfully.",
                 'url'=>Url::to(['view','id'=>$id]),
             ]);
         }else{
@@ -511,17 +507,17 @@ class PeriodeController extends Controller
                 $model->SubordinateID1 = $_subordinate1[$i]==0?null:$_subordinate1[$i];
                 $model->SubordinateID2 = $_subordinate2[$i]==0?null:$_subordinate2[$i];
                 $model->PeriodeID = $id;
-                $model->Status = $_mode;
+                // $model->Status = $_mode;
+                $model->Status = 0;
                 $model->save(false);
-
-                // //send notif
-                // if($_mode==1){
-                //     $this->notif($model);
-                // }
+            }
+            //send notif
+            if($_mode==1){
+                $this->notifAdmin($id);
             }
             $message = 'Data Has been saved.';
             if($_mode==1){
-                $message = 'Data has been saved and all status are activated.';
+                $message = 'Data has been saved and request review has been sent.';
             }
             echo json_encode([
                 'status'=>1,
@@ -812,68 +808,19 @@ class PeriodeController extends Controller
         $mpdf->Output('DetailNilai.pdf', 'D');
     }
 
-    /**
-     * create notif
-     * {padata} 
-     */
-    private function notif($pa){
-        if($pa!=null){
-            $_arr=[
-                'self'=>$pa->EmployeeID,
-                'peersid1'=>$pa->PeersID1,
-                'peersid2'=>$pa->PeersID2,
-                'superiorid1'=>$pa->SuperiorID1,
-                'superiorid2'=>$pa->SuperiorID2,
-                'subordinateid1'=>$pa->SubordinateID1,
-                'subordinateid2'=>$pa->SubordinateID2,
-            ];
-            if($_arr['self']!=null){
+    private function notifAdmin($id){
+        //get all admin
+        $periode = $this->findModel($id);
+        $admins = User::find()
+                        ->where(['role'=>'head'])
+                        ->all();
+        if($admins!=null){
+            foreach ($admins as $key => $value) {
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Self Performance Appraisal';
-                $model->To = $_arr['self'];
-                $model->save(false);
-            }
-            if($_arr['peersid1']!=null){
-                $model = new Notif();
-                $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Peers1 Performance Appraisal kepada '.$pa->peersID1->personal->FullName;
-                $model->To = $_arr['peersid1'];
-                $model->save(false);
-            }
-            if($_arr['peersid2']!=null){
-                $model = new Notif();
-                $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Peers2 Performance Appraisal kepada '.$pa->peersID2->personal->FullName;
-                $model->To = $_arr['peersid2'];
-                $model->save(false);
-            }
-            if($_arr['superiorid1']!=null){
-                $model = new Notif();
-                $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Superior1 Performance Appraisal kepada '.$pa->superiorID1->personal->FullName;
-                $model->To = $_arr['superiorid1'];
-                $model->save(false);
-            }
-            if($_arr['superiorid2']!=null){
-                $model = new Notif();
-                $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Superior2 Performance Appraisal kepada '.$pa->superiorID2->personal->FullName;
-                $model->To = $_arr['superiorid2'];
-                $model->save(false);
-            }
-            if($_arr['subordinateid1']!=null){
-                $model = new Notif();
-                $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Subordinate1 Performance Appraisal kepada '.$pa->subordinateID1->personal->FullName;
-                $model->To = $_arr['subordinateid1'];
-                $model->save(false);
-            }
-            if($_arr['subordinateid2']!=null){
-                $model = new Notif();
-                $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Subordinate2 Performance Appraisal kepada '.$pa->subordinateID2->personal->FullName;
-                $model->To = $_arr['subordinateid2'];
+                $model->Message = "Request review periode ".$periode->Start." s/d ".$periode->End;
+                $model->TypeTo = 1;
+                $model->To = $value->UserID;
                 $model->save(false);
             }
         }

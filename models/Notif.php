@@ -8,12 +8,11 @@ use Yii;
  * This is the model class for table "notif".
  *
  * @property int $NotifID
- * @property string $Message
- * @property string $Created_at
+ * @property string|null $Message
  * @property int $Read
  * @property int|null $To
- *
- * @property Employment $to
+ * @property int|null $TypeTo
+ * @property string|null $Created_at
  */
 class Notif extends \yii\db\ActiveRecord
 {
@@ -31,11 +30,9 @@ class Notif extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['Message', 'Created_at'], 'required'],
+            [['Read', 'To', 'TypeTo'], 'integer'],
             [['Created_at'], 'safe'],
-            [['Read', 'To'], 'integer'],
-            [['Message'], 'string', 'max' => 255],
-            [['To'], 'exist', 'skipOnError' => true, 'targetClass' => Employment::className(), 'targetAttribute' => ['To' => 'EmployeeID']],
+            [['Message'], 'string', 'max' => 150],
         ];
     }
 
@@ -47,19 +44,10 @@ class Notif extends \yii\db\ActiveRecord
         return [
             'NotifID' => 'Notif ID',
             'Message' => 'Message',
-            'Created_at' => 'Created At',
             'Read' => 'Read',
             'To' => 'To',
+            'TypeTo' => 'Type To',
+            'Created_at' => 'Created At',
         ];
-    }
-
-    /**
-     * Gets query for [[To]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTo()
-    {
-        return $this->hasOne(Employment::className(), ['EmployeeID' => 'To']);
     }
 }

@@ -4,6 +4,11 @@ use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+$_roleName = [
+    'head'=>'Head Team People and Culture',
+    'admin'=>'Admin',
+    'user'=>'Staff'
+];
 ?>
 
 <header class="main-header">
@@ -127,7 +132,7 @@ use yii\helpers\Html;
                                         echo Yii::$app->session->get('fullname');
                                     }
                                     if(Yii::$app->session->has('role')){
-                                        $role = Yii::$app->session->get('role')=='admin'?'HRD':'Staff';
+                                        $role = $_roleName[Yii::$app->session->get('role')];
                                         echo "<br>";
                                         echo "<span>".$role."</span>";
                                     }
