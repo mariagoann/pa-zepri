@@ -818,7 +818,7 @@ class PeriodeController extends Controller
             foreach ($admins as $key => $value) {
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = "Request review periode ".$periode->Start." s/d ".$periode->End;
+                $model->Message = "Request review periode <br> ".$periode->Start." s/d ".$periode->End;
                 $model->TypeTo = 1;
                 $model->To = $value->UserID;
                 $model->save(false);

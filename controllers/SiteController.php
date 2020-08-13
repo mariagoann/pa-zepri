@@ -12,7 +12,7 @@ use app\models\ContactForm;
 use app\models\PersonalInfo;
 use app\models\User;
 use app\models\Employment;
-
+use app\models\Notif;
 class SiteController extends Controller
 {
     /**
@@ -80,6 +80,7 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $employeeid = null;
             $personalinfo = Personalinfo::find()
                                     ->where(['UserID'=>Yii::$app->user->id])
                                     ->one();
@@ -91,7 +92,6 @@ class SiteController extends Controller
             Yii::$app->session->set('role',$user->role);
             if($personalinfo!=null){
                 $isSuperior=false;
-                $employeeid = null;
                 if($personalinfo->employments!=null){
                     $employeeid = $personalinfo->employments->EmployeeID;
                     $_isSuperior = Employment::find()
@@ -103,7 +103,11 @@ class SiteController extends Controller
                 Yii::$app->session->set('isSuperior',$isSuperior);
                 Yii::$app->session->set('employeeid',$employeeid);
                 Yii::$app->session->set('personalid',$personalinfo->PersonalID);
+                
             }
+            //message
+            $message = $this->getMessage($user->role,$employeeid);
+            Yii::$app->session->set('message',json_encode($message));
             if($user->role=='admin'){
                 return $this->redirect(['personalinfo/index']);
             }else if($user->role=='head'){
@@ -118,6 +122,38 @@ class SiteController extends Controller
         return $this->render('login', [
             'model' => $model,
         ]);
+    }
+
+    private function getMessage($role,$employeeid=null)
+    {
+        $notif = [];
+        $badge = 0;
+        $id = Yii::$app->user->getId();
+        if($role=='user'){
+            $notif = Notif::find()
+                            ->where(['To'=>$employeeid,
+                                    'TypeTo'=>0])
+                            ->orderBy(['Created_at'=>SORT_DESC]);
+            $badge = $notif->andWhere(['Read'=>0])
+                            ->count();
+            $notif = $notif->limit(15)
+                            ->asArray()
+                            ->all();
+        }else{
+            $notif = Notif::find()
+                            ->where(['To'=>$id,
+                                    'TypeTo'=>1])
+                            ->orderBy(['Created_at'=>SORT_DESC]);
+            $badge = $notif->andWhere(['Read'=>0])
+                            ->count();
+            $notif = $notif->limit(15)
+                            ->asArray()
+                            ->all();
+        }
+        return [
+            'badge'=>$badge,
+            'notif'=>$notif,
+        ];
     }
 
     /**

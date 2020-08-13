@@ -112,7 +112,7 @@ class ApprovalController extends Controller
     }
     private function notifAdmin($id,$message){
         $periode = $this->findModel($id);
-        $message = "Periode ".$periode->Start." s/d ".$periode->End." : ".$message;
+        $message = "Periode ".$periode->Start." s/d ".$periode->End.":<br>".$message;
         //get all admin
         $admins = User::find()
                         ->where(['role'=>'admin'])
@@ -145,49 +145,49 @@ class ApprovalController extends Controller
             if($_arr['self']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Self Performance Appraisal';
+                $model->Message = 'Silahkan melakukan penilaian <br> Self Performance Appraisal';
                 $model->To = $_arr['self'];
                 $model->save(false);
             }
             if($_arr['peersid1']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Peers1 Performance Appraisal kepada '.$pa->peersID1->personal->FullName;
+                $model->Message = 'Silahkan melakukan penilaian <br> Peers1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['peersid1'];
                 $model->save(false);
             }
             if($_arr['peersid2']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Peers2 Performance Appraisal kepada '.$pa->peersID2->personal->FullName;
+                $model->Message = 'Silahkan melakukan penilaian <br> Peers2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['peersid2'];
                 $model->save(false);
             }
             if($_arr['superiorid1']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Superior1 Performance Appraisal kepada '.$pa->superiorID1->personal->FullName;
+                $model->Message = 'Silahkan melakukan penilaian <br> Superior1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['superiorid1'];
                 $model->save(false);
             }
             if($_arr['superiorid2']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Superior2 Performance Appraisal kepada '.$pa->superiorID2->personal->FullName;
+                $model->Message = 'Silahkan melakukan penilaian <br> Superior2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['superiorid2'];
                 $model->save(false);
             }
             if($_arr['subordinateid1']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Subordinate1 Performance Appraisal kepada '.$pa->subordinateID1->personal->FullName;
+                $model->Message = 'Silahkan melakukan penilaian <br> Subordinate1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['subordinateid1'];
                 $model->save(false);
             }
             if($_arr['subordinateid2']!=null){
                 $model = new Notif();
                 $model->Created_at = date('Y-m-d H:i:s');
-                $model->Message = 'Silahkan melakukan penilaian Subordinate2 Performance Appraisal kepada '.$pa->subordinateID2->personal->FullName;
+                $model->Message = 'Silahkan melakukan penilaian <br> Subordinate2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['subordinateid2'];
                 $model->save(false);
             }
