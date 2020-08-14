@@ -41,6 +41,11 @@ $urlindex = Url::to(['index']);
     </div>
 
     <div class='row'>
+        <div id="loading" style="display: none;">
+            <center>
+                    <p><b>Loading...</b></p>
+            </center>
+        </div>
         <form action="<?php echo Url::to(['kirim', 'id'=>$_GET['id']])?>" id="approve" method='post'>
             <table class='table table-bordered table-striped'>
                 <thead>
@@ -109,6 +114,7 @@ $urlindex = Url::to(['index']);
 $script = <<< JS
 function execute(method, url,datas){
     console.log(datas);
+    $('#loading').show();
     $.ajax({
         type: method,
         url: url,
@@ -118,9 +124,11 @@ function execute(method, url,datas){
             var response = JSON.parse(response);
             alert(response.message);
             window.location.href = response.url;
+            $('#loading').hide();
         },
         error: function(){
             alert('Something went wrong');
+            $('#loading').hide();
         }
     });
 }

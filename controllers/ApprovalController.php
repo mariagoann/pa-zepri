@@ -17,6 +17,7 @@ use app\models\Paparameter;
 use yii\helpers\Url;
 use app\models\Notif;
 use app\models\User;
+use yii\swiftmailer\Mailer;
 
 /**
  * PeriodeController implements the CRUD actions for Periode model.
@@ -133,6 +134,8 @@ class ApprovalController extends Controller
      */
     private function notifPenilai($pa){
         if($pa!=null){
+            $subject=null;
+            $message = null;
             $_arr=[
                 'self'=>$pa->EmployeeID,
                 'peersid1'=>$pa->PeersID1,
@@ -148,6 +151,14 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Self Performance Appraisal';
                 $model->To = $_arr['self'];
                 $model->save(false);
+                
+                //send email
+                $subject = "Self Performance Appraisal";
+                $message = "Hi ".$pa->employee->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja kepada diri anda. <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->employee->personal->Email, $message, $subject);
             }
             if($_arr['peersid1']!=null){
                 $model = new Notif();
@@ -155,6 +166,14 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Peers1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['peersid1'];
                 $model->save(false);
+
+                //send email
+                $subject = "Peers Performance Appraisal";
+                $message = "Hi ".$pa->peersID1->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja Peers kepada rekan anda ".$pa->employee->personal->FullName.". <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->peersID1->personal->Email, $message, $subject);
             }
             if($_arr['peersid2']!=null){
                 $model = new Notif();
@@ -162,6 +181,14 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Peers2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['peersid2'];
                 $model->save(false);
+
+                //send email
+                $subject = "Peers Performance Appraisal";
+                $message = "Hi ".$pa->peersID2->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja Peers kepada rekan anda ".$pa->employee->personal->FullName.". <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->peersID2->personal->Email, $message, $subject);
             }
             if($_arr['superiorid1']!=null){
                 $model = new Notif();
@@ -169,6 +196,14 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Superior1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['superiorid1'];
                 $model->save(false);
+
+                //send email
+                $subject = "Superior Performance Appraisal";
+                $message = "Hi ".$pa->superiorID1->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja untuk atasan langsung anda ".$pa->employee->personal->FullName.". <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->superiorID1->personal->Email, $message, $subject);
             }
             if($_arr['superiorid2']!=null){
                 $model = new Notif();
@@ -176,6 +211,14 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Superior2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['superiorid2'];
                 $model->save(false);
+
+                //send email
+                $subject = "Superior Performance Appraisal";
+                $message = "Hi ".$pa->superiorID2->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja untuk atasan langsung anda ".$pa->employee->personal->FullName.". <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->superiorID2->personal->Email, $message, $subject);
             }
             if($_arr['subordinateid1']!=null){
                 $model = new Notif();
@@ -183,6 +226,14 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Subordinate1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['subordinateid1'];
                 $model->save(false);
+
+                //send email
+                $subject = "Subordinate Performance Appraisal";
+                $message = "Hi ".$pa->subordinateID1->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja untuk bawahan langsung anda ".$pa->employee->personal->FullName.". <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->subordinateID1->personal->Email, $message, $subject);
             }
             if($_arr['subordinateid2']!=null){
                 $model = new Notif();
@@ -190,8 +241,28 @@ class ApprovalController extends Controller
                 $model->Message = 'Silahkan melakukan penilaian <br> Subordinate2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['subordinateid2'];
                 $model->save(false);
+
+                //send email
+                $subject = "Subordinate Performance Appraisal";
+                $message = "Hi ".$pa->subordinateID2->personal->FullName.", <br><br>
+                            Segera lakukan penilaian kinerja untuk bawahan langsung anda ".$pa->employee->personal->FullName.". <br><br>
+                            Regards, <br>
+                            People and Culture Team.";
+                $this->sendEmail($pa->subordinateID2->personal->Email, $message, $subject);
             }
         }
+    }
+    private function sendEmail($to, $message, $subject){
+        $send = 'abc';
+        if($to!=null && $to!=''){
+            $send = Yii::$app->mailer->compose()
+                ->setFrom('performanceappraisalproperty@gmail.com', 'Performance Appraisal')
+                ->setTo($to)
+                ->setSubject($subject)
+                ->setHtmlBody($message)
+                ->send();
+        }
+        return $send;
     }
     public function actionExportPenilai($id){
         $pa = Performanceappraisal::find()
@@ -226,6 +297,10 @@ class ApprovalController extends Controller
                 'subordinateID1.personal.FullName'=>'SubordinateID1',
             ],
         ]);
+    }
+
+    public function actionSend(){
+        var_dump($this->sendEmail('gorettis010@gmail.com','Test Message', 'Test Subject'));
     }
     public function beforeAction($action) 
     { 
