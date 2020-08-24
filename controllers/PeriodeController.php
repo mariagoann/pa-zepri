@@ -86,10 +86,17 @@ class PeriodeController extends Controller
                 }
             }
         }
+        $notif = Notif::find()
+                        ->where(['PeriodeID'=>$id,
+                                'TypeTo'=>1,
+                                'To'=>Yii::$app->user->id])
+                        ->orderBy(['NotifID'=>SORT_DESC])
+                        ->one();
         return $this->render('view', [
             'model' => $pa,
             'periode'=>$_periode,
             'status'=>$status,
+            'notif'=>$notif!=null?$notif->Notes:null,
         ]);
     }
 
@@ -821,6 +828,8 @@ class PeriodeController extends Controller
                 $model->Message = "Request review periode <br> ".$periode->Start." s/d ".$periode->End;
                 $model->TypeTo = 1;
                 $model->To = $value->UserID;
+                $model->GoTo = Url::to(['approval/view','id'=>$id]);
+                $model->PeriodeID  = $id;
                 $model->save(false);
             }
         }

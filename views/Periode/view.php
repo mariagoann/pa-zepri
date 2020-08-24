@@ -27,7 +27,13 @@ $urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
         <div class='col-md-6'>
             <p>
                 <?= Html::a('Export ToExcel', ['export-penilai','id'=>$periode->PeriodeID], ['class' => 'btn btn-success']) ?>
-                <?= Html::a('Ubah Karyawan Penilai', ['update-existing', 'id'=>$_GET['id']], ['class' => 'btn btn-primary']) ?>
+                <?php
+                    if($status==true){
+                        echo Html::a('Ubah Karyawan Penilai', ['update-existing', 'id'=>$_GET['id']], ['class' => 'btn btn-primary disabled']) ;
+                    }else{
+                        echo Html::a('Ubah Karyawan Penilai', ['update-existing', 'id'=>$_GET['id']], ['class' => 'btn btn-primary']) ;
+                    }
+                ?>
                 <?php
                     if($status==false){
                         echo "<span class='badge'>Belum Aktif <i class='fa fa-times-circle'></i></span>";
@@ -76,11 +82,33 @@ $urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
                     ?>
                 </tbody>
             </table>
+            <?php
+                if($notif!=null && $status==false){
+            ?>
+                <div class="form-group">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <label for="alasan">Notes Penolakan</label>
+                        <textarea class='form-control' id='alasan' rows='4' name='alasan' disabled><?php echo $notif;?></textarea>
+                    </div>  
+                    <div class="col-md-1"></div>
+                </div>
+            <?php
+                }
+            ?>
+
             <div class="form-group">
                 <div class="col-md-11"></div>
                 <div class="col-md-1">
                     <p>
-                        <button type ="button" class="btn btn-primary" id='kirim'>Kirim</button>
+                        <?php
+                            if($status==true){
+                                echo "<button type ='button' class='btn btn-primary' id='kirim' disabled>Kirim</button>";
+                            }else{
+                                echo "<button type ='button' class='btn btn-primary' id='kirim'>Kirim</button>";
+                            }
+                        ?>
+                        
                     </p>
                 </div>
             </div>

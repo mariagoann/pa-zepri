@@ -107,13 +107,14 @@ class ApprovalController extends Controller
         }else{
             echo json_encode([
                 'status'=>0,
-                'message'=>'Something went wrong'
+                'message'=>'Something went wrong',
+                'url'=>Url::to(['view','id'=>$id]),
             ]);
         }
     }
-    private function notifAdmin($id,$message){
+    private function notifAdmin($id,$_message){
         $periode = $this->findModel($id);
-        $message = "Periode ".$periode->Start." s/d ".$periode->End.":<br>".$message;
+        $message = "Tolak penilaian pada <br> Periode ".$periode->Start." s/d ".$periode->End;
         //get all admin
         $admins = User::find()
                         ->where(['role'=>'admin'])
@@ -125,6 +126,9 @@ class ApprovalController extends Controller
                 $model->Message = $message;
                 $model->TypeTo = 1;
                 $model->To = $value->UserID;
+                $model->Notes = $_message;
+                $model->GoTo = Url::to(['periode/view','id'=>$id]);
+                $model->PeriodeID  = $id;
                 $model->save(false);
             }
         }
@@ -165,6 +169,7 @@ class ApprovalController extends Controller
                 $model->Created_at = date('Y-m-d H:i:s');
                 $model->Message = 'Silahkan melakukan penilaian <br> Peers1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['peersid1'];
+                $model->PeriodeID  = $pa->PeriodeID;
                 $model->save(false);
 
                 //send email
@@ -180,6 +185,7 @@ class ApprovalController extends Controller
                 $model->Created_at = date('Y-m-d H:i:s');
                 $model->Message = 'Silahkan melakukan penilaian <br> Peers2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['peersid2'];
+                $model->PeriodeID  = $pa->PeriodeID;
                 $model->save(false);
 
                 //send email
@@ -195,6 +201,7 @@ class ApprovalController extends Controller
                 $model->Created_at = date('Y-m-d H:i:s');
                 $model->Message = 'Silahkan melakukan penilaian <br> Superior1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['superiorid1'];
+                $model->PeriodeID  = $pa->PeriodeID;
                 $model->save(false);
 
                 //send email
@@ -210,6 +217,7 @@ class ApprovalController extends Controller
                 $model->Created_at = date('Y-m-d H:i:s');
                 $model->Message = 'Silahkan melakukan penilaian <br> Superior2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['superiorid2'];
+                $model->PeriodeID  = $pa->PeriodeID;
                 $model->save(false);
 
                 //send email
@@ -225,6 +233,7 @@ class ApprovalController extends Controller
                 $model->Created_at = date('Y-m-d H:i:s');
                 $model->Message = 'Silahkan melakukan penilaian <br> Subordinate1 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['subordinateid1'];
+                $model->PeriodeID  = $pa->PeriodeID;
                 $model->save(false);
 
                 //send email
@@ -240,6 +249,7 @@ class ApprovalController extends Controller
                 $model->Created_at = date('Y-m-d H:i:s');
                 $model->Message = 'Silahkan melakukan penilaian <br> Subordinate2 PA kepada '.$pa->employee->personal->FullName;
                 $model->To = $_arr['subordinateid2'];
+                $model->PeriodeID  = $pa->PeriodeID;
                 $model->save(false);
 
                 //send email
@@ -255,12 +265,16 @@ class ApprovalController extends Controller
     private function sendEmail($to, $message, $subject){
         $send = 'abc';
         if($to!=null && $to!=''){
-            $send = Yii::$app->mailer->compose()
-                ->setFrom('performanceappraisalproperty@gmail.com', 'Performance Appraisal')
-                ->setTo($to)
-                ->setSubject($subject)
-                ->setHtmlBody($message)
-                ->send();
+            try {
+                $send = Yii::$app->mailer->compose()
+                    ->setFrom('performanceappraisalproperty@gmail.com', 'Performance Appraisal')
+                    ->setTo($to)
+                    ->setSubject($subject)
+                    ->setHtmlBody($message)
+                    ->send();
+            } catch (Exception $th) {
+                $send = $th->getMessage();
+            }
         }
         return $send;
     }

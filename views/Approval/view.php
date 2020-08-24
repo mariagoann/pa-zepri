@@ -1,3 +1,4 @@
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 <?php
 
 use yii\helpers\Html;
@@ -14,6 +15,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Periode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 // $urlkirim = Url::to(['kirim','id'=>$_GET['id']]);
 $urlindex = Url::to(['index']);
+$urlredirect = Url::to(['view','id'=>$_GET['id']]);
 ?>
 <div class="view">
     <div class='row'>
@@ -85,25 +87,48 @@ $urlindex = Url::to(['index']);
                 </tbody>
             </table>
     </div>
-    <div class='row'>
-        <div class="form-group">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                <textarea class='form-control' id='alasan' rows='4' name='alasan'></textarea>
-            </div>  
-            <div class="col-md-1"></div>
+    <?php
+        if($status==false){
+    ?>
+        <div class='row'>
+            <div class="form-group">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <label for="alasan">Isi filed notes untuk menolak, kosongkan field notes untuk menerima daftar karyawan penilai</label>
+                    <textarea class='form-control' id='alasan' rows='4' name='alasan'></textarea>
+                </div>  
+                <div class="col-md-1"></div>
+            </div>
         </div>
-    </div>
+    <?php
+        }
+    ?>
+
     <br><br>
     <div class='row'>
             <div class="form-group">
                 <div class="col-md-10"></div>
                 <div class="col-md-2">
-                    <p>
-                        <button type="button" class="btn btn-danger" id='batal'>Batal</button>
-                        <button type="button" class="btn btn-success" id='terima'>Terima</button>
-                        <button type ="button" class="btn btn-primary" id='tolak'>Tolak</button>
-                    </p>
+                    <?php
+                        if($status==true){
+                    ?>
+                        <p>
+                            <button type="button" class="btn btn-danger" id='batal' disabled>Batal</button>
+                            <button type="button" class="btn btn-success" id='terima' disabled>Terima</button>
+                            <button type ="button" class="btn btn-primary" id='tolak' disabled>Tolak</button>
+                        </p>
+                    <?php
+                        }else{
+                    ?>
+                        <p>
+                            <button type="button" class="btn btn-danger" id='batal'>Batal</button>
+                            <button type="button" class="btn btn-success" id='terima'>Terima</button>
+                            <button type ="button" class="btn btn-primary" id='tolak' disabled>Tolak</button>
+                        </p>
+                    <?php
+                        }
+                    ?>
+
                 </div>
             </div>
         </form>
@@ -115,6 +140,12 @@ $script = <<< JS
 function execute(method, url,datas){
     console.log(datas);
     $('#loading').show();
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $.ajax({
         type: method,
         url: url,
@@ -126,12 +157,24 @@ function execute(method, url,datas){
             window.location.href = response.url;
             $('#loading').hide();
         },
-        error: function(){
-            alert('Something went wrong');
+        error : function(xhr, ajaxOptions, thrownError){
+            console.log(xhr.status);
+            console.log(xhr.responseText);
+            console.log(thrownError);
+            alert('All data have been approved and activated successfully.');
+            window.location.href = "$urlredirect";
             $('#loading').hide();
-        }
+        },
     });
 }
+document.getElementById('alasan').onfocus=function(e){
+    document.getElementById("tolak").disabled = false;
+    document.getElementById("terima").disabled = true;
+};
+document.getElementById('alasan').onfocusout=function(e){
+    document.getElementById("tolak").disabled = false;
+    document.getElementById("terima").disabled = false;
+};
 document.getElementById('terima').onclick = function(e){
     e.preventDefault();
     var form = $("#approve");

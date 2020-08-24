@@ -60,7 +60,7 @@ $url = Url::to(['api/read']);
                             <!-- inner menu: contains the actual data -->
                             <ul class="menu">
                                 <li><!-- start message -->
-                                    <a href="#">
+                                    <a href=<?php echo $value['GoTo']!=null?$value['GoTo']:"#";?> >
                                         <div class="pull-left">
                                             <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
                                                  alt="User Image"/>
@@ -69,7 +69,7 @@ $url = Url::to(['api/read']);
                                             System
                                             <small><i class="fa fa-clock-o"></i><?php echo $value['Created_at'];?></small>
                                         </h4>
-                                        <small><?php echo $value['Message'];?></small>
+                                        <small><?php echo $value['Message']?></small>
                                     </a>
                                 </li>
                                 <!-- end message -->
