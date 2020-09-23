@@ -660,7 +660,7 @@ class PeriodeController extends Controller
                             'idc'=>$id
                         ];
                    }else{
-                        $_valuesSubordinate1 = [
+                        $_valuesSubordinate2 = [
                             'by'=>$value->reviewBy->personal->FullName,
                             'scoreEmployee'=>number_format($value->EmployeePerformanceScore,2),
                             'avgValues'=>number_format($value->AvgValues,2),
