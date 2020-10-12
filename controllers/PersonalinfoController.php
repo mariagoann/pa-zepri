@@ -299,7 +299,7 @@ class PersonalinfoController extends Controller
         }
     }
 
-    public function actionExport(){
+    public function actionExport1(){
         $model = Personalinfo::find()->all();
         header("Content-Disposition: attachment; filename=\"DaftarPegawai.xlsx\"");
         \moonland\phpexcel\Excel::widget([
@@ -340,6 +340,84 @@ class PersonalinfoController extends Controller
                         'employments.employeeSuperior.personal.FullName'=>'Superior Name',
             ], 
         ]);
+    }
+
+    public function actionExport(){
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $model = Personalinfo::find()->all();
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:X1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Karyawan PT.Property - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','Personal ID')
+                    ->setCellValue('B2','Name')
+                    ->setCellValue('C2','Identity Type')
+                    ->setCellValue('D2','Identity Number')
+                    ->setCellValue('E2','Identity Expiry Date')
+                    ->setCellValue('F2','Place of Birth')
+                    ->setCellValue('G2','Date of Birth')
+                    ->setCellValue('H2','Status')
+                    ->setCellValue('I2','Gender')
+                    ->setCellValue('J2','Religion')
+                    ->setCellValue('K2','Phone Number')
+                    ->setCellValue('L2','Address')
+                    ->setCellValue('M2','Email')
+                    ->setCellValue('N2','Employee ID')
+                    ->setCellValue('O2','Employee Number')
+                    ->setCellValue('P2','Join Date')
+                    ->setCellValue('Q2','Status Employment')
+                    ->setCellValue('R2','Organization Name')
+                    ->setCellValue('S2','Job Position')
+                    ->setCellValue('T2','AKA Job Position')
+                    ->setCellValue('U2','Job Title')
+                    ->setCellValue('V2','Level Name')
+                    ->setCellValue('W2','Squad Name')
+                    ->setCellValue('X2','Superior Name');
+        $i=3;
+        foreach($model as $key=>$value){
+            $_organization = $value->employments->organization==null?'-':$value->employments->organization->OrganizationName;
+            $_jobPosition = $value->employments->jobPosition==null?'-':$value->employments->jobPosition->JobPositionName;
+            $_jobTitle = $value->employments->jobTitle==null?'-':$value->employments->jobTitle->JobTitleName;
+            $_level = $value->employments->level==null?'-':$value->employments->level->LevelName;
+            $_squad = $value->employments->squad==null?'-':$value->employments->squad->SquadName;
+            $_atasan = $value->employments->employeeSuperior==null?'-':$value->employments->employeeSuperior->personal->FullName;
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->PersonalID)
+                                        ->setCellValue('B'.$i,$value->FullName)
+                                        ->setCellValue('C'.$i,$value->identityType->Name)
+                                        ->setCellValue('D'.$i,$value->IdentityNumber)
+                                        ->setCellValue('E'.$i,$value->IdentityExpiryDate)
+                                        ->setCellValue('F'.$i,$value->PlaceOfBirth)
+                                        ->setCellValue('G'.$i,$value->DateOfBirth)
+                                        ->setCellValue('H'.$i,$value->status->Name)
+                                        ->setCellValue('I'.$i,$value->gender->Name)
+                                        ->setCellValue('J'.$i,$value->religion->Name)
+                                        ->setCellValue('K'.$i,$value->PhoneNumber)
+                                        ->setCellValue('L'.$i,$value->Address)
+                                        ->setCellValue('M'.$i,$value->Email)
+                                        ->setCellValue('N'.$i,$value->employments->EmployeeID)
+                                        ->setCellValue('O'.$i,$value->employments->EmployeeNumber)
+                                        ->setCellValue('P'.$i,$value->employments->JoinDate)
+                                        ->setCellValue('Q'.$i,$value->employments->employeeStatus->Name)
+                                        ->setCellValue('R'.$i,$_organization)
+                                        ->setCellValue('S'.$i,$_jobPosition)
+                                        ->setCellValue('T'.$i,$value->employments->AKA_JobPosition)
+                                        ->setCellValue('U'.$i,$_jobTitle)
+                                        ->setCellValue('V'.$i,$_level)
+                                        ->setCellValue('W'.$i,$_squad)
+                                        ->setCellValue('X'.$i,$_atasan);
+            $i++;
+        }
+        $xlsName = "DaftarKaryawan_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
     /**
      * Deletes an existing Personalinfo model.

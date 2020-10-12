@@ -17,12 +17,37 @@ Yii::$app->formatter->format($model->periode->End, 'date' );
         width : 80px;
         border: 1px solid black;
     }
+    #parent{
+        padding: 0px, auto;
+        width: 700px;
+        height:100px;
+        /* border:solid 1px #f00; */
+    }
+    #child-left{
+        float: left;
+        width: 170px;
+        height:100px;
+        /* border:solid 1px #0F0; */
+    }
+    #child-right{
+        float: right;
+        width: 500px;
+        height:100px;
+        /* border:solid 1px #00F; */
+    }
 </style>
-<div class="detailnilai">
+<div class="container">
     <div class ='row'>
         <div class=col-md-1></div>
         <div class ='col-md-10'>
-            <p><h3 style='text-align:center;'>Hasil Penilaian Kinerja Karyawan</h3></p>
+            <div id="parent">
+                <div id="child-left">
+                <img style='display:block;' src="<?=Url::to('@web/assets/dummy-logo2.jpg',true)?>" height='80' width='170'/>
+                </div>
+                <div id="child-right">
+                    <h2 style="text-align:center;">Hasil Penilaian Kinerja Karyawan <br> PT.PROPERTY</h2>
+                </div>
+            </div>  
             <table class='table table-striped table-bordered '>
                 <tbody>
                     <tr>
@@ -131,6 +156,15 @@ Yii::$app->formatter->format($model->periode->End, 'date' );
                     ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <br><br>
+    <div style="display: block; width: 100%; min-width: 100px;">
+        <div style="display: inline-block; text-align: right; width: 100%">
+            <p>Jakarta, <?php echo date('d-m-Y');?></p>
+            <BR><BR><BR><BR>
+            <p>(<?=$sign;?>)</p>
         </div>
     </div>
 </div>

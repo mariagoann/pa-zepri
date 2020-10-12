@@ -18,6 +18,7 @@ use yii\helpers\Url;
 use Mpdf\Mpdf;
 use app\models\Notif;
 use app\models\User;
+use app\models\Personalinfo;
 
 /**
  * PeriodeController implements the CRUD actions for Periode model.
@@ -672,6 +673,14 @@ class PeriodeController extends Controller
                 }
             }
         }
+        $head = Personalinfo::find()
+                            ->joinWith('user')
+                            ->where(['user.role'=>'head'])
+                            ->one();
+                    $sign = "Manager People&Culture";
+        if($head!=null){
+            $sign = $head->FullName;
+        }
         return [
             'model'=>$modelPAC,
             'self'=>$_selfScore,
@@ -682,13 +691,14 @@ class PeriodeController extends Controller
             'subordinate1'=>$_valuesSubordinate1,
             'subordinate2'=>$_valuesSubordinate2,
             'flag'=>$flag,
+            'sign'=>$sign,
         ];
     }
 
     /**
      * {periodeid}
      */
-    public function actionExport($id){
+    public function actionExport1($id){
         $role=Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
         $isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):false;
         $eid = Yii::$app->session->get('employeeid');
@@ -746,10 +756,81 @@ class PeriodeController extends Controller
         ]);
     }
 
+    public function actionExport($id){
+        $role=Yii::$app->session->has('role')?Yii::$app->session->get('role'):null;
+        $isSuperior = Yii::$app->session->has('isSuperior')?Yii::$app->session->get('isSuperior'):false;
+        $eid = Yii::$app->session->get('employeeid');
+        $query = Pacomponent::find()
+                            ->innerJoin('employment', 'pacomponent.EmployeeID=employment.EmployeeID')
+                            ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID')
+                            ->where(['pacomponent.PeriodeID'=>$id])
+                            ->all();
+        if($role=='user' && $isSuperior){
+            $modelpa = Performanceappraisal::find()
+                            ->where(['SuperiorID1'=>$eid])
+                            ->orWhere(['SuperiorID2'=>$eid])
+                            ->andWhere(['Status'=>'1'])
+                            ->all();
+            $ids = [];
+            if($modelpa!=null){
+                foreach ($modelpa as $key => $value) {
+                    array_push($ids,$value->PerformanceAppraisalID);
+                }
+            }
+            $query = Pacomponent::find()
+                                ->innerJoin('employment', 'pacomponent.EmployeeID=employment.EmployeeID')
+                                ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID')
+                                ->where(['in','pacomponent.PerformanceAppraisalID',$ids])
+                                ->andWhere(['pacomponent.PeriodeID'=>$id])
+                                ->all();
+        }
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Penilaian Kinerja PT.Property - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','Start Periode')
+                    ->setCellValue('B2','End Periode')
+                    ->setCellValue('C2','EmployeeID')
+                    ->setCellValue('D2','Name')
+                    ->setCellValue('E2','Employee Score')
+                    ->setCellValue('F2','Self Core Values')
+                    ->setCellValue('G2','Peers Core Values')
+                    ->setCellValue('H2','Subordinate Core Values')
+                    ->setCellValue('I2','Superior Core Values')
+                    ->setCellValue('J2','Total Score');
+        $i=3;
+        foreach ($query as $key => $value) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->periode->Start)
+                                                        ->setCellValue('B'.$i,$value->periode->End)
+                                                        ->setCellValue('C'.$i,$value->EmployeeID)
+                                                        ->setCellValue('D'.$i,$value->employee->personal->FullName)
+                                                        ->setCellValue('E'.$i,$value->EmployeeScore)
+                                                        ->setCellValue('F'.$i,$value->Self)
+                                                        ->setCellValue('G'.$i,$value->Peers)
+                                                        ->setCellValue('H'.$i,$value->SubordinatesToSuperior)
+                                                        ->setCellValue('I'.$i,$value->SuperiorToSubordinates)
+                                                        ->setCellValue('J'.$i,$value->TotalScore);
+            $i++;
+        }
+        $xlsName = "DaftarPenilaianKaryawan_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+    }
+    
+
     /**
      * {periodeid}
      */
-    public function actionExportPenilai($id){
+    public function actionExportPenilai1($id){
         $pa = Performanceappraisal::find()
                         ->where(['PeriodeID'=>$id])
                         ->all();
@@ -784,6 +865,60 @@ class PeriodeController extends Controller
         ]);
     }
 
+    public function actionExportPenilai($id){
+        $pa = Performanceappraisal::find()
+                        ->where(['PeriodeID'=>$id])
+                        ->all();
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Karyawan Penilai PT.Property - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','Start Periode')
+                    ->setCellValue('B2','End Periode')
+                    ->setCellValue('C2','EmployeeID')
+                    ->setCellValue('D2','Name')
+                    ->setCellValue('E2','Peers1')
+                    ->setCellValue('F2','Peers2')
+                    ->setCellValue('G2','SuperiorID1')
+                    ->setCellValue('H2','SuperiorID2')
+                    ->setCellValue('I2','SubordinateID1')
+                    ->setCellValue('J2','SubordinateID2')
+                    ->setCellValue('K2','Status');
+        $i=3;
+        foreach ($pa as $key => $value) {
+            $_peers1 = $value->PeersID1==null?'-':$value->peersID1->personal->FullName;
+            $_peers2 = $value->PeersID2==null?'-':$value->peersID2->personal->FullName;
+            $_superior1 = $value->SuperiorID1==null?'-':$value->superiorID1->personal->FullName;
+            $_superior2 = $value->SuperiorID2==null?'-':$value->superiorID2->personal->FullName;
+            $_subordinate1 = $value->SubordinateID1==null?'-':$value->subordinateID1->personal->FullName;
+            $_subordinate2 = $value->SubordinateID2==null?'-':$value->subordinateID2->personal->FullName;
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->periode->Start)
+                                                        ->setCellValue('B'.$i,$value->periode->End)
+                                                        ->setCellValue('C'.$i,$value->EmployeeID)
+                                                        ->setCellValue('D'.$i,$value->employee->personal->FullName)
+                                                        ->setCellValue('E'.$i,$_peers1)
+                                                        ->setCellValue('F'.$i,$_peers2)
+                                                        ->setCellValue('G'.$i,$_superior1)
+                                                        ->setCellValue('H'.$i,$_superior2)
+                                                        ->setCellValue('I'.$i,$_subordinate1)
+                                                        ->setCellValue('J'.$i,$_subordinate2)
+                                                        ->setCellValue('K'.$i,$value->Status);
+            $i++;
+        }
+        $xlsName = "DaftarKaryawanPenilai_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+    }
+
     public function actionSavetrack($id){
         if($_POST){
             $model = PAComponent::find()
@@ -810,7 +945,8 @@ class PeriodeController extends Controller
     public function actionGenpdf($id=null,$eid=null,$pid=null){
         $formed = $this->formeddetailnilai($id,$eid,$pid);
         $mpdf = new mPDF();
-        // return $this->renderPartial('formatdetailnilai',$formed);
+        $mpdf->showImageErrors = true;
+        // return $this->renderPartial('formatdetailnilai',$formed);die;
         $mpdf->WriteHTML($this->renderPartial('formatdetailnilai',$formed));
         $mpdf->Output('DetailNilai.pdf', 'D');
     }

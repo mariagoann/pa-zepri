@@ -454,6 +454,13 @@ class ComposerStaticInitc52e0bd305df9610c28187a8f963423f
                 0 => __DIR__ . '/..' . '/cebe/yii2-gravatar',
             ),
         ),
+        'P' => 
+        array (
+            'PHPExcel' => 
+            array (
+                0 => __DIR__ . '/..' . '/phpoffice/phpexcel/Classes',
+            ),
+        ),
         'H' => 
         array (
             'HTMLPurifier' => 
