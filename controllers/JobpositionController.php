@@ -95,7 +95,7 @@ class JobpositionController extends Controller
         ]);
     }
 
-    public function actionExport(){
+    public function actionExport1(){
         $model = Jobposition::find()->all();
         header("Content-Disposition: attachment; filename=\"DaftarJobPosition.xlsx\"");
         \moonland\phpexcel\Excel::widget([
@@ -112,6 +112,38 @@ class JobpositionController extends Controller
                 'CodeJobPosition'=>'Code Job Position'
             ],
         ]);
+    }
+
+    public function actionExport(){
+        $model = Jobposition::find()->all();
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:D1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Job Position - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','JobPositionID')
+                    ->setCellValue('B2','Code Job Position')
+                    ->setCellValue('C2','Job Position Name')
+                    ->setCellValue('D2','Level');
+        $i=3;
+        foreach ($model as $key => $value) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->JobPositionID)
+                                                        ->setCellValue('B'.$i,$value->CodeJobPosition)
+                                                        ->setCellValue('C'.$i,$value->JobPositionName)
+                                                        ->setCellValue('D'.$i,$value->Level);
+            $i++;
+        }
+        $xlsName = "DaftarJobPosition_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
 
     /**

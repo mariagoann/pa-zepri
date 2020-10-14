@@ -102,7 +102,7 @@ class JoblevelController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionExport(){
+    public function actionExport1(){
         $model = Joblevel::find()->all();
         header("Content-Disposition: attachment; filename=\"DaftarJobLevel.xlsx\"");
         \moonland\phpexcel\Excel::widget([
@@ -118,6 +118,36 @@ class JoblevelController extends Controller
                 'CodeLevel'=>'Code Level'
             ],
         ]);
+    }
+
+    public function actionExport(){
+        $model = Joblevel::find()->all();
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Job Level - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','LevelID')
+                    ->setCellValue('B2','Code Level')
+                    ->setCellValue('C2','Level Name');
+        $i=3;
+        foreach ($model as $key => $value) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->LevelID)
+                                                        ->setCellValue('B'.$i,$value->CodeLevel)
+                                                        ->setCellValue('C'.$i,$value->LevelName);
+            $i++;
+        }
+        $xlsName = "DaftarLevel_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
 
     public function actionDelete($id)

@@ -82,7 +82,7 @@ class SquadController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionExport(){
+    public function actionExport1(){
         $model = Squad::find()->all();
         header("Content-Disposition: attachment; filename=\"DaftarSquad.xlsx\"");
         \moonland\phpexcel\Excel::widget([
@@ -98,6 +98,36 @@ class SquadController extends Controller
                 'CodeSquad'=>'Code Squad'
             ],
         ]);
+    }
+
+    public function actionExport(){
+        $model = Squad::find()->all();
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Squad - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','SquadID')
+                    ->setCellValue('B2','Code Squad')
+                    ->setCellValue('C2','Squad Name');
+        $i=3;
+        foreach ($model as $key => $value) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->SquadID)
+                                                        ->setCellValue('B'.$i,$value->CodeSquad)
+                                                        ->setCellValue('C'.$i,$value->SquadName);
+            $i++;
+        }
+        $xlsName = "DaftarSquad_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
 
     public function actionUpdate($id)

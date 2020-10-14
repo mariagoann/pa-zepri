@@ -765,6 +765,9 @@ class PeriodeController extends Controller
                             ->innerJoin('personalinfo', 'personalinfo.PersonalID=employment.PersonalID')
                             ->where(['pacomponent.PeriodeID'=>$id])
                             ->all();
+        $periode = Periode::find()
+                            ->where(['PeriodeID'=>$id])
+                            ->one();
         if($role=='user' && $isSuperior){
             $modelpa = Performanceappraisal::find()
                             ->where(['SuperiorID1'=>$eid])
@@ -787,7 +790,7 @@ class PeriodeController extends Controller
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->setActiveSheetIndex(0);
         $objPHPExcel->getActiveSheet()->mergeCells('A1:J1');
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Penilaian Kinerja PT.Property - '.date('d-m-Y'));
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Hasil Penilaian Kinerja Karyawan Periode < '.$periode->Start." - ".$periode->End." >");
         $style = array(
             'alignment' => array(
                 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -818,7 +821,7 @@ class PeriodeController extends Controller
                                                         ->setCellValue('J'.$i,$value->TotalScore);
             $i++;
         }
-        $xlsName = "DaftarPenilaianKaryawan_".date('d-m-Y').".xlsx";
+        $xlsName = "HasilPenilaianKinerja_".date('d-m-Y').".xlsx";
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="'.$xlsName.'"');
@@ -869,10 +872,13 @@ class PeriodeController extends Controller
         $pa = Performanceappraisal::find()
                         ->where(['PeriodeID'=>$id])
                         ->all();
+        $periode = Periode::find()
+                            ->where(['PeriodeID'=>$id])
+                            ->one();
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->setActiveSheetIndex(0);
         $objPHPExcel->getActiveSheet()->mergeCells('A1:K1');
-        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Karyawan Penilai PT.Property - '.date('d-m-Y'));
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Karyawan Penilai Periode < '.$periode->Start." - ".$periode->End." >");
         $style = array(
             'alignment' => array(
                 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,

@@ -102,7 +102,7 @@ class OrganizationController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionExport(){
+    public function actionExport1(){
         $model = Organization::find()->all();
         header("Content-Disposition: attachment; filename=\"DaftarOrganisasi.xlsx\"");
         \moonland\phpexcel\Excel::widget([
@@ -118,6 +118,36 @@ class OrganizationController extends Controller
                 'CodeOrganization'=>'Code Organization'
             ],
         ]);
+    }
+
+    public function actionExport(){
+        $model = Organization::find()->all();
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->mergeCells('A1:C1');
+        $objPHPExcel->getActiveSheet()->setCellValue('A1', 'Daftar Organisasi - '.date('d-m-Y'));
+        $style = array(
+            'alignment' => array(
+                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+            )
+        );
+        $objPHPExcel->getActiveSheet()->getStyle("A1")->applyFromArray($style);
+        $objPHPExcel->getActiveSheet()->setCellValue('A2','OrganizationID')
+                    ->setCellValue('B2','Code Organization')
+                    ->setCellValue('C2','Organization Name');
+        $i=3;
+        foreach ($model as $key => $value) {
+            $objPHPExcel->getActiveSheet()->setCellValue('A'.$i,$value->OrganizationID)
+                                                        ->setCellValue('B'.$i,$value->CodeOrganization)
+                                                        ->setCellValue('C'.$i,$value->OrganizationName);
+            $i++;
+        }
+        $xlsName = "DaftarOrganisasi_".date('d-m-Y').".xlsx";
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$xlsName.'"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
     }
 
     public function actionDelete($id)
